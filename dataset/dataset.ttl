@@ -314,3 +314,53 @@ ex:endTheCourt a sr:Quest ;
   sr:questReward ex:relicOfDawn .
 
 ex:graveHermit sr:offersQuest ex:endTheCourt .
+
+## AGGIUNGO A MANO
+
+ex:chapel03 a sr:Room;
+  rdfs:label "Cappella Profanata"@it;
+  rdfs:label "Desecrated Chapel"@en;
+  rdfs:comment "Antica cappella votiva sconsacrata dalla Corte dei Morti, dove un monaco cavo veglia ancora sull'altare in rovina."@it;
+  rdfs:comment "Ancient votive chapel desecrated by the Dead Court, where a hollow monk still watches over the ruined altar."@en;
+  sr:locatedInBiome ex:catacomb;
+  sr:dangerLevel 3 ;
+  sr:floorIndex 2 ;
+  sr:connectedTo ex:hall08;
+  sr:hostsMonster ex:hollowMonk .
+
+ex:boneBridge04 a sr:Room;
+  rdfs:label "Ponte d'Ossa"@it;
+  rdfs:label "Bone Bridge"@en;
+  rdfs:comment "Campata sospesa di ossa fuse che collega il santuario alle profondità, oscillante sopra un abisso senza fondo."@it;
+  rdfs:comment "Suspended span of fused bones linking the sanctum to the depths, swaying above a bottomless chasm."@en;
+  sr:locatedInBiome ex:catacomb;
+  sr:dangerLevel 5 ;
+  sr:floorIndex 3 .
+ 
+ex:hollowMonk a sr:Monster ;
+  rdfs:label "Monaco Cavo"@it ;
+  rdfs:label "Hollow Monk"@en ;
+  rdfs:comment "Spettro terrificante di un monaco"@it ;
+  rdfs:comment "Terrifying Spectre of a Monk"@en ;
+  sr:belongsToFaction ex:deadCourt ;
+  sr:dropsItem ex:embalmerTonic ;
+  sr:spawnWeight 8 ;
+  sr:minPlayerLevel 2 .
+
+ex:ashPriest a sr:NPC ;
+  rdfs:label "Sacerdote di Cenere"@it ;
+  rdfs:label "Ash Priest"@en ;
+  rdfs:comment "Sacerdote anziano con i capelli color cenere"@it ;
+  rdfs:comment "Elderly priest with ash-colored hair"@en ;
+  sr:offersQuest ex:cullTheSpores .
+
+ex:cullTheSpores a sr:Quest ;
+  rdfs:label "Estirpa le Spore"@it ;
+  rdfs:label "Cull the Spores"@en ;
+  rdfs:comment "Quest di eliminazione di pericolose spore che infestano un luogo."@it ;
+  rdfs:comment "Quest to eliminate dangerous spores that infest a location."@en ;
+  sr:questTargetRoom ex:sporeNest02 ;
+  sr:questReward ex:boneBlade .
+
+ex:entrance01 sr:connectedTo ex:chapel03 .
+ex:sanctum01 sr:connectedTo ex:boneBridge04 .
