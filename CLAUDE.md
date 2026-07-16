@@ -87,6 +87,8 @@ La validazione unisce sempre ontologia + dataset nel data graph: senza le triple
 
 Attenzione (bug rdflib): nelle query SPARQL delle shape non usare `FILTER NOT EXISTS { { A } UNION { B } }` — rdflib lo valuta male e produce violazioni spurie; usare più `FILTER NOT EXISTS` separati (equivalenti per De Morgan).
 
+**README.md è il manuale utente dei comandi CLI**: ogni volta che si aggiunge, rimuove o modifica un comando, un'opzione o una query in `queries/`, aggiornare anche README.md nella stessa modifica.
+
 ## Convenzioni
 
 - **Namespace**: `sr:` = `http://example.org/semantic-roguelike#` per il vocabolario (ontologia e shape); `ex:` = `http://example.org/id/` per le istanze del dataset. Non definire istanze in `sr:` né termini di vocabolario in `ex:`.
