@@ -72,6 +72,7 @@ ex:sanctum01 a sr:Room ;
   rdfs:label "Sanctum 01"@en ;
   rdfs:comment "Stanza più profonda e pericolosa, accessibile solo dopo aver soddisfatto il vincolo di progressione della porta sigillata."@it ;
   rdfs:comment "Deeper and more dangerous room, accessible only after satisfying the progression constraint of the sealed gate."@en ;
+  sr:hostsMonster ex:cryptTyrant ;
   sr:locatedInBiome ex:catacomb ;
   sr:dangerLevel 6 ;
   sr:floorIndex 3 .
@@ -90,3 +91,20 @@ ex:recoverRelic a sr:Quest ;
   rdfs:comment "Recovery quest that directs the player toward the sanctum and rewards completion with a key item."@en ;
   sr:questTargetRoom ex:sanctum01 ;
   sr:questReward ex:ivoryKey .
+
+ex:tyrantSigil a sr:Item ;
+  rdfs:label "Sigillo del Tiranno"@it ;
+  rdfs:label "Tyrant's Sigil"@en ;
+  rdfs:comment "Emblema raro lasciato dal guardiano del santuario, prova della sua sconfitta."@it ;
+  rdfs:comment "Rare emblem left by the sanctum guardian, proof of its defeat."@en ;
+  sr:rarity 7 .
+
+ex:cryptTyrant a sr:Boss ;
+  rdfs:label "Tiranno della Cripta"@it ;
+  rdfs:label "Crypt Tyrant"@en ;
+  rdfs:comment "Boss non morto che presidia il santuario più profondo delle catacombe."@it ;
+  rdfs:comment "Undead boss guarding the deepest sanctum of the catacombs."@en ;
+  sr:belongsToFaction ex:deadCourt ;
+  sr:dropsItem ex:tyrantSigil ;
+  sr:spawnWeight 3 ;
+  sr:minPlayerLevel 4 .

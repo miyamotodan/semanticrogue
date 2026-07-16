@@ -2,6 +2,17 @@
 @prefix sh:   <http://www.w3.org/ns/shacl#> .
 @prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl:  <http://www.w3.org/2002/07/owl#> .
+
+sr:RogueShapes a owl:Ontology ;
+  rdfs:label "Shape SHACL del Roguelike Semantico"@it ;
+  rdfs:label "Semantic Roguelike SHACL shapes"@en ;
+  rdfs:comment "Documento delle shape con le dichiarazioni di prefisso usate dalle query SPARQL dei vincoli."@it ;
+  rdfs:comment "Shapes document carrying the prefix declarations used by the SPARQL-based constraints."@en ;
+  sh:declare [
+    sh:prefix "sr" ;
+    sh:namespace "http://example.org/semantic-roguelike#"^^xsd:anyURI ;
+  ] .
 
 sr:RoomShape a sh:NodeShape ;
   sh:targetClass sr:Room ;
@@ -222,6 +233,7 @@ sr:DangerousRoomMustHaveContent a sh:NodeShape ;
   rdfs:comment "Shape SPARQL-based che intercetta stanze con alto livello di pericolo ma prive di mostri, segnalando possibili incoerenze di bilanciamento o authoring."@it ;
   rdfs:comment "SPARQL-based shape that catches rooms with high danger level but no monsters, flagging possible balancing or authoring inconsistencies."@en ;
   sh:sparql [
+    sh:prefixes sr:RogueShapes ;
     sh:message "Una stanza molto pericolosa dovrebbe ospitare almeno un mostro."@it ;
     sh:message "A highly dangerous room should host at least one monster."@en ;
     sh:select """
@@ -241,6 +253,7 @@ sr:RequiredKeyMustExistInWorld a sh:NodeShape ;
   rdfs:comment "Shape SPARQL-based che verifica che l'oggetto richiesto da un portale sia almeno ottenibile nel mondo, ad esempio come drop di un mostro."@it ;
   rdfs:comment "SPARQL-based shape that verifies that the item required by a portal is at least obtainable in the world, for example as a monster drop."@en ;
   sh:sparql [
+    sh:prefixes sr:RogueShapes ;
     sh:message "L'oggetto richiesto dal portale deve essere ottenibile nel mondo di gioco."@it ;
     sh:message "The item required by the portal must be obtainable in the game world."@en ;
     sh:select """
