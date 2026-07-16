@@ -1,0 +1,255 @@
+@prefix sr:   <http://example.org/semantic-roguelike#> .
+@prefix sh:   <http://www.w3.org/ns/shacl#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+sr:RoomShape a sh:NodeShape ;
+  sh:targetClass sr:Room ;
+  rdfs:label "Vincoli della stanza"@it ;
+  rdfs:label "Room constraints"@en ;
+  rdfs:comment "Shape che verifica che ogni stanza del gioco abbia le proprietà strutturali minime necessarie per essere interpretata correttamente dal motore: un bioma, un livello di pericolo e un indice di piano."@it ;
+  rdfs:comment "Shape that verifies that every room in the game has the minimum structural properties needed to be interpreted correctly by the engine: a biome, a danger level, and a floor index."@en ;
+
+  sh:property [
+    sh:path sr:locatedInBiome ;
+    sh:minCount 1 ;
+    sh:maxCount 1 ;
+    sh:class sr:Biome ;
+    sh:name "bioma della stanza"@it ;
+    sh:name "room biome"@en ;
+    sh:description "Ogni stanza deve appartenere a uno e un solo bioma, che ne definisce il contesto ambientale e semantico."@it ;
+    sh:description "Each room must belong to one and only one biome, which defines its environmental and semantic context."@en ;
+  ] ;
+
+  sh:property [
+    sh:path sr:dangerLevel ;
+    sh:minCount 1 ;
+    sh:maxCount 1 ;
+    sh:datatype xsd:integer ;
+    sh:minInclusive 1 ;
+    sh:maxInclusive 10 ;
+    sh:name "livello di pericolo"@it ;
+    sh:name "danger level"@en ;
+    sh:description "Ogni stanza deve avere un valore intero di pericolo compreso tra 1 e 10, utile per bilanciamento, spawn e progressione."@it ;
+    sh:description "Each room must have an integer danger value between 1 and 10, useful for balancing, spawning, and progression."@en ;
+  ] ;
+
+  sh:property [
+    sh:path sr:floorIndex ;
+    sh:minCount 1 ;
+    sh:maxCount 1 ;
+    sh:datatype xsd:integer ;
+    sh:minInclusive 1 ;
+    sh:name "indice del piano"@it ;
+    sh:name "floor index"@en ;
+    sh:description "Ogni stanza deve indicare il piano o livello di profondità a cui appartiene nella struttura del dungeon."@it ;
+    sh:description "Each room must indicate the floor or depth level it belongs to in the dungeon structure."@en ;
+  ] .
+
+sr:ConnectedRoomShape a sh:NodeShape ;
+  sh:targetClass sr:Room ;
+  rdfs:label "Connessioni della stanza"@it ;
+  rdfs:label "Room connectivity"@en ;
+  rdfs:comment "Shape che controlla che i collegamenti di una stanza puntino effettivamente ad altre stanze del mondo di gioco."@it ;
+  rdfs:comment "Shape that checks that a room's connections actually point to other rooms in the game world."@en ;
+
+  sh:property [
+    sh:path sr:connectedTo ;
+    sh:class sr:Room ;
+    sh:name "connessioni uscenti"@it ;
+    sh:name "outgoing connections"@en ;
+    sh:description "Se una stanza dichiara una connessione, il nodo di destinazione deve essere una stanza valida."@it ;
+    sh:description "If a room declares a connection, the target node must be a valid room."@en ;
+  ] .
+
+sr:MonsterShape a sh:NodeShape ;
+  sh:targetClass sr:Monster ;
+  rdfs:label "Vincoli del mostro"@it ;
+  rdfs:label "Monster constraints"@en ;
+  rdfs:comment "Shape che verifica che ogni mostro possieda gli attributi minimi necessari alla generazione e al bilanciamento: fazione, peso di spawn e livello minimo del giocatore."@it ;
+  rdfs:comment "Shape that verifies that every monster has the minimum attributes needed for generation and balancing: faction, spawn weight, and minimum player level."@en ;
+
+  sh:property [
+    sh:path sr:belongsToFaction ;
+    sh:minCount 1 ;
+    sh:maxCount 1 ;
+    sh:class sr:Faction ;
+    sh:name "fazione del mostro"@it ;
+    sh:name "monster faction"@en ;
+    sh:description "Ogni mostro deve appartenere a una e una sola fazione, così da supportare regole di alleanza e ostilità."@it ;
+    sh:description "Each monster must belong to one and only one faction, so that alliance and hostility rules can be supported."@en ;
+  ] ;
+
+  sh:property [
+    sh:path sr:spawnWeight ;
+    sh:minCount 1 ;
+    sh:maxCount 1 ;
+    sh:datatype xsd:integer ;
+    sh:minInclusive 1 ;
+    sh:name "peso di generazione"@it ;
+    sh:name "spawn weight"@en ;
+    sh:description "Ogni mostro deve avere un peso di generazione positivo che ne influenzi la probabilità relativa di comparsa."@it ;
+    sh:description "Each monster must have a positive spawn weight that influences its relative probability of appearing."@en ;
+  ] ;
+
+  sh:property [
+    sh:path sr:minPlayerLevel ;
+    sh:minCount 1 ;
+    sh:maxCount 1 ;
+    sh:datatype xsd:integer ;
+    sh:minInclusive 1 ;
+    sh:name "livello minimo del giocatore"@it ;
+    sh:name "minimum player level"@en ;
+    sh:description "Ogni mostro deve indicare il livello minimo del giocatore a cui il suo incontro è ritenuto appropriato."@it ;
+    sh:description "Each monster must indicate the minimum player level at which encountering it is considered appropriate."@en ;
+  ] .
+
+sr:PortalShape a sh:NodeShape ;
+  sh:targetClass sr:Portal ;
+  rdfs:label "Vincoli del portale"@it ;
+  rdfs:label "Portal constraints"@en ;
+  rdfs:comment "Shape che verifica che ogni portale o elemento di gating specifichi chiaramente sia la condizione di accesso sia la stanza sbloccata."@it ;
+  rdfs:comment "Shape that verifies that each portal or gating element clearly specifies both the access condition and the unlocked room."@en ;
+
+  sh:property [
+    sh:path sr:requiresItem ;
+    sh:minCount 1 ;
+    sh:maxCount 1 ;
+    sh:class sr:Item ;
+    sh:name "oggetto richiesto"@it ;
+    sh:name "required item"@en ;
+    sh:description "Ogni portale deve richiedere esattamente un oggetto valido per essere aperto o attivato."@it ;
+    sh:description "Each portal must require exactly one valid item to be opened or activated."@en ;
+  ] ;
+
+  sh:property [
+    sh:path sr:unlocksRoom ;
+    sh:minCount 1 ;
+    sh:maxCount 1 ;
+    sh:class sr:Room ;
+    sh:name "stanza sbloccata"@it ;
+    sh:name "unlocked room"@en ;
+    sh:description "Ogni portale deve indicare quale stanza rende accessibile una volta soddisfatta la condizione."@it ;
+    sh:description "Each portal must indicate which room becomes accessible once the condition is met."@en ;
+  ] .
+
+sr:QuestShape a sh:NodeShape ;
+  sh:targetClass sr:Quest ;
+  rdfs:label "Vincoli della quest"@it ;
+  rdfs:label "Quest constraints"@en ;
+  rdfs:comment "Shape che garantisce che ogni quest abbia almeno una destinazione o stanza obiettivo e una ricompensa esplicita."@it ;
+  rdfs:comment "Shape that ensures that each quest has at least a destination or target room and an explicit reward."@en ;
+
+  sh:property [
+    sh:path sr:questTargetRoom ;
+    sh:minCount 1 ;
+    sh:maxCount 1 ;
+    sh:class sr:Room ;
+    sh:name "stanza obiettivo"@it ;
+    sh:name "target room"@en ;
+    sh:description "Ogni quest deve puntare a una stanza obiettivo che ne rappresenti il focus spaziale principale."@it ;
+    sh:description "Each quest must point to a target room representing its main spatial focus."@en ;
+  ] ;
+
+  sh:property [
+    sh:path sr:questReward ;
+    sh:minCount 1 ;
+    sh:maxCount 1 ;
+    sh:class sr:Item ;
+    sh:name "ricompensa della quest"@it ;
+    sh:name "quest reward"@en ;
+    sh:description "Ogni quest deve specificare un oggetto come ricompensa del completamento."@it ;
+    sh:description "Each quest must specify an item as a completion reward."@en ;
+  ] .
+
+sr:NPCQuestShape a sh:NodeShape ;
+  sh:targetClass sr:NPC ;
+  rdfs:label "Quest offerte dagli NPC"@it ;
+  rdfs:label "NPC quest offering"@en ;
+  rdfs:comment "Shape che controlla che le quest collegate a un personaggio non giocante siano effettivamente istanze valide di quest."@it ;
+  rdfs:comment "Shape that checks that the quests linked to a non-player character are actually valid quest instances."@en ;
+
+  sh:property [
+    sh:path sr:offersQuest ;
+    sh:class sr:Quest ;
+    sh:name "quest offerte"@it ;
+    sh:name "offered quests"@en ;
+    sh:description "Se un NPC offre una quest, il valore deve essere una risorsa classificata come quest."@it ;
+    sh:description "If an NPC offers a quest, the value must be a resource typed as a quest."@en ;
+  ] .
+
+sr:BossPlacementShape a sh:NodeShape ;
+  sh:targetClass sr:Boss ;
+  rdfs:label "Ricompensa del boss"@it ;
+  rdfs:label "Boss reward constraint"@en ;
+  rdfs:comment "Shape che impone che un boss non sia privo di ricompense o bottino significativo, evitando incontri sistemicamente sterili."@it ;
+  rdfs:comment "Shape that enforces that a boss is not left without rewards or meaningful loot, avoiding systemically sterile encounters."@en ;
+
+  sh:property [
+    sh:path sr:dropsItem ;
+    sh:minCount 1 ;
+    sh:class sr:Item ;
+    sh:name "bottino del boss"@it ;
+    sh:name "boss loot"@en ;
+    sh:description "Ogni boss deve rilasciare almeno un oggetto valido, così da giustificare il suo ruolo nella progressione."@it ;
+    sh:description "Each boss must drop at least one valid item, thereby justifying its role in progression."@en ;
+  ] .
+
+sr:RareItemShape a sh:NodeShape ;
+  sh:targetClass sr:Item ;
+  rdfs:label "Vincoli di rarità dell'oggetto"@it ;
+  rdfs:label "Item rarity constraints"@en ;
+  rdfs:comment "Shape che controlla la presenza e il range del valore di rarità per tutti gli oggetti del mondo di gioco."@it ;
+  rdfs:comment "Shape that checks the presence and range of the rarity value for all items in the game world."@en ;
+
+  sh:property [
+    sh:path sr:rarity ;
+    sh:minCount 1 ;
+    sh:maxCount 1 ;
+    sh:datatype xsd:integer ;
+    sh:minInclusive 1 ;
+    sh:maxInclusive 10 ;
+    sh:name "rarità dell'oggetto"@it ;
+    sh:name "item rarity"@en ;
+    sh:description "Ogni oggetto deve avere un valore di rarità intero compreso tra 1 e 10 per supportare bilanciamento e distribuzione."@it ;
+    sh:description "Each item must have an integer rarity value between 1 and 10 to support balancing and distribution."@en ;
+  ] .
+
+sr:DangerousRoomMustHaveContent a sh:NodeShape ;
+  sh:targetClass sr:Room ;
+  rdfs:label "Le stanze pericolose devono avere contenuto"@it ;
+  rdfs:label "Dangerous rooms must have content"@en ;
+  rdfs:comment "Shape SPARQL-based che intercetta stanze con alto livello di pericolo ma prive di mostri, segnalando possibili incoerenze di bilanciamento o authoring."@it ;
+  rdfs:comment "SPARQL-based shape that catches rooms with high danger level but no monsters, flagging possible balancing or authoring inconsistencies."@en ;
+  sh:sparql [
+    sh:message "Una stanza molto pericolosa dovrebbe ospitare almeno un mostro."@it ;
+    sh:message "A highly dangerous room should host at least one monster."@en ;
+    sh:select """
+      SELECT $this
+      WHERE {
+        $this sr:dangerLevel ?d .
+        FILTER(?d >= 6)
+        FILTER NOT EXISTS { $this sr:hostsMonster ?m . }
+      }
+    """ ;
+  ] .
+
+sr:RequiredKeyMustExistInWorld a sh:NodeShape ;
+  sh:targetClass sr:Portal ;
+  rdfs:label "La chiave richiesta deve esistere nel mondo"@it ;
+  rdfs:label "Required key must exist in the world"@en ;
+  rdfs:comment "Shape SPARQL-based che verifica che l'oggetto richiesto da un portale sia almeno ottenibile nel mondo, ad esempio come drop di un mostro."@it ;
+  rdfs:comment "SPARQL-based shape that verifies that the item required by a portal is at least obtainable in the world, for example as a monster drop."@en ;
+  sh:sparql [
+    sh:message "L'oggetto richiesto dal portale deve essere ottenibile nel mondo di gioco."@it ;
+    sh:message "The item required by the portal must be obtainable in the game world."@en ;
+    sh:select """
+      SELECT $this
+      WHERE {
+        $this sr:requiresItem ?k .
+        FILTER NOT EXISTS {
+          ?monster sr:dropsItem ?k .
+        }
+      }
+    """ ;
+  ] .

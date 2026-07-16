@@ -1,0 +1,92 @@
+@prefix sr:   <http://example.org/semantic-roguelike#> .
+@prefix ex:   <http://example.org/id/> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+ex:catacomb a sr:Biome ;
+  rdfs:label "Catacombe"@it ;
+  rdfs:label "Catacombs"@en ;
+  rdfs:comment "Bioma sotterraneo fatto di corridoi funerari, cripte e ambienti decadenti, adatto a non morti, reliquie e porte sigillate."@it ;
+  rdfs:comment "Underground biome made of funerary corridors, crypts, and decaying chambers, suitable for undead, relics, and sealed gates."@en .
+
+ex:deadCourt a sr:Faction ;
+  rdfs:label "Corte dei Morti"@it ;
+  rdfs:label "Dead Court"@en ;
+  rdfs:comment "Fazione ostile legata ai non morti e al controllo rituale delle profondità delle catacombe."@it ;
+  rdfs:comment "Hostile faction associated with the undead and the ritual control of the catacombs' depths."@en .
+
+ex:playerFaction a sr:Faction ;
+  rdfs:label "Fazione del Giocatore"@it ;
+  rdfs:label "Player Faction"@en ;
+  rdfs:comment "Fazione astratta usata per rappresentare l’allineamento o il punto di vista del giocatore rispetto alle altre forze del mondo."@it ;
+  rdfs:comment "Abstract faction used to represent the player's alignment or point of view with respect to the other forces in the world."@en ;
+  sr:enemyOf ex:deadCourt .
+
+ex:crypt07 a sr:Room ;
+  rdfs:label "Cripta 07"@it ;
+  rdfs:label "Crypt 07"@en ;
+  rdfs:comment "Stanza intermedia delle catacombe con minaccia moderata, usata come punto di incontro con un guardiano non morto e come nodo di progressione verso aree più profonde."@it ;
+  rdfs:comment "Intermediate room in the catacombs with moderate threat, used as an encounter point with an undead guardian and as a progression node toward deeper areas."@en ;
+  sr:locatedInBiome ex:catacomb ;
+  sr:dangerLevel 4 ;
+  sr:floorIndex 2 ;
+  sr:connectedTo ex:hall08 ;
+  sr:hostsMonster ex:boneWarden .
+
+ex:hall08 a sr:Room ;
+  rdfs:label "Sala 08"@it ;
+  rdfs:label "Hall 08"@en ;
+  rdfs:comment "Corridoio o sala di transizione collegata alla cripta principale, utile per espandere la topologia del livello."@it ;
+  rdfs:comment "Corridor or transition hall connected to the main crypt, useful for expanding the topology of the level."@en ;
+  sr:locatedInBiome ex:catacomb ;
+  sr:dangerLevel 3 ;
+  sr:floorIndex 2 .
+
+ex:ivoryKey a sr:KeyItem ;
+  rdfs:label "Chiave d'Avorio"@it ;
+  rdfs:label "Ivory Key"@en ;
+  rdfs:comment "Oggetto chiave raro richiesto per aprire un accesso sigillato verso una stanza più avanzata del dungeon."@it ;
+  rdfs:comment "Rare key item required to open a sealed access toward a more advanced room in the dungeon."@en ;
+  sr:rarity 5 .
+
+ex:boneWarden a sr:Monster ;
+  rdfs:label "Custode d'Ossa"@it ;
+  rdfs:label "Bone Warden"@en ;
+  rdfs:comment "Guardiano non morto delle catacombe, affiliato alla Corte dei Morti e posto come ostacolo prima dell’ottenimento della chiave."@it ;
+  rdfs:comment "Undead guardian of the catacombs, affiliated with the Dead Court and placed as an obstacle before obtaining the key."@en ;
+  sr:belongsToFaction ex:deadCourt ;
+  sr:dropsItem ex:ivoryKey ;
+  sr:spawnWeight 12 ;
+  sr:minPlayerLevel 2 .
+
+ex:sealedGate a sr:Portal ;
+  rdfs:label "Porta Sigillata"@it ;
+  rdfs:label "Sealed Gate"@en ;
+  rdfs:comment "Portale bloccato che richiede la Chiave d'Avorio per consentire il passaggio verso l’area successiva."@it ;
+  rdfs:comment "Locked portal that requires the Ivory Key to allow passage to the next area."@en ;
+  sr:requiresItem ex:ivoryKey ;
+  sr:unlocksRoom ex:sanctum01 .
+
+ex:sanctum01 a sr:Room ;
+  rdfs:label "Santuario 01"@it ;
+  rdfs:label "Sanctum 01"@en ;
+  rdfs:comment "Stanza più profonda e pericolosa, accessibile solo dopo aver soddisfatto il vincolo di progressione della porta sigillata."@it ;
+  rdfs:comment "Deeper and more dangerous room, accessible only after satisfying the progression constraint of the sealed gate."@en ;
+  sr:locatedInBiome ex:catacomb ;
+  sr:dangerLevel 6 ;
+  sr:floorIndex 3 .
+
+ex:graveHermit a sr:NPC ;
+  rdfs:label "Eremita della Tomba"@it ;
+  rdfs:label "Grave Hermit"@en ;
+  rdfs:comment "NPC enigmatico che introduce una quest legata all’esplorazione del santuario e alla ricompensa chiave."@it ;
+  rdfs:comment "Enigmatic NPC who introduces a quest related to exploring the sanctum and obtaining the key reward."@en ;
+  sr:offersQuest ex:recoverRelic .
+
+ex:recoverRelic a sr:Quest ;
+  rdfs:label "Recupera la Reliquia"@it ;
+  rdfs:label "Recover the Relic"@en ;
+  rdfs:comment "Quest di recupero che indirizza il giocatore verso il santuario e ricompensa il completamento con un oggetto chiave."@it ;
+  rdfs:comment "Recovery quest that directs the player toward the sanctum and rewards completion with a key item."@en ;
+  sr:questTargetRoom ex:sanctum01 ;
+  sr:questReward ex:ivoryKey .

@@ -1,0 +1,224 @@
+@prefix sr:   <http://example.org/semantic-roguelike#> .
+@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl:  <http://www.w3.org/2002/07/owl#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+sr:SemanticRoguelikeOntology a owl:Ontology ;
+  rdfs:label "Ontologia del Roguelike Semantico"@it ;
+  rdfs:label "Semantic Roguelike Ontology"@en ;
+  rdfs:comment "Ontologia di base per modellare stanze, creature, oggetti, fazioni, quest e vincoli di un roguelike governato da tecnologie del web semantico."@it ;
+  rdfs:comment "Core ontology for modeling rooms, creatures, items, factions, quests, and constraints in a roguelike driven by semantic web technologies."@en .
+
+### Classi
+
+sr:Room a owl:Class ;
+  rdfs:label "Stanza"@it ;
+  rdfs:label "Room"@en ;
+  rdfs:comment "Unità spaziale esplorabile del dungeon o del mondo di gioco, collegata ad altre stanze e caratterizzata da pericolo, bioma e contenuti."@it ;
+  rdfs:comment "Explorable spatial unit of the dungeon or game world, connected to other rooms and characterized by danger, biome, and contents."@en .
+
+sr:Biome a owl:Class ;
+  rdfs:label "Bioma"@it ;
+  rdfs:label "Biome"@en ;
+  rdfs:comment "Tipo ambientale o ecologico che definisce atmosfera, temi, creature compatibili e vincoli di generazione di una zona."@it ;
+  rdfs:comment "Environmental or ecological type that defines atmosphere, themes, compatible creatures, and generation constraints for an area."@en .
+
+sr:Monster a owl:Class ;
+  rdfs:label "Mostro"@it ;
+  rdfs:label "Monster"@en ;
+  rdfs:comment "Entità ostile o comunque affrontabile dal giocatore, con appartenenza di fazione, livello minimo e possibili ricompense."@it ;
+  rdfs:comment "Hostile or otherwise confrontable entity for the player, with faction membership, minimum level, and possible rewards."@en .
+
+sr:Boss a owl:Class ;
+  rdfs:subClassOf sr:Monster ;
+  rdfs:label "Boss"@it ;
+  rdfs:label "Boss"@en ;
+  rdfs:comment "Mostro speciale di rilievo narrativo o sistemico, generalmente più forte e associato a ricompense o progressione."@it ;
+  rdfs:comment "Special monster with narrative or systemic importance, generally stronger and associated with rewards or progression."@en .
+
+sr:Item a owl:Class ;
+  rdfs:label "Oggetto"@it ;
+  rdfs:label "Item"@en ;
+  rdfs:comment "Entità raccoglibile o utilizzabile dal giocatore, come armi, consumabili, chiavi o ricompense di quest."@it ;
+  rdfs:comment "Collectible or usable entity for the player, such as weapons, consumables, keys, or quest rewards."@en .
+
+sr:Weapon a owl:Class ;
+  rdfs:subClassOf sr:Item ;
+  rdfs:label "Arma"@it ;
+  rdfs:label "Weapon"@en ;
+  rdfs:comment "Oggetto utilizzato principalmente per attacco o difesa offensiva nel combattimento."@it ;
+  rdfs:comment "Item used primarily for attack or offensive combat interaction."@en .
+
+sr:Consumable a owl:Class ;
+  rdfs:subClassOf sr:Item ;
+  rdfs:label "Consumabile"@it ;
+  rdfs:label "Consumable"@en ;
+  rdfs:comment "Oggetto che viene usato e normalmente esaurito, ad esempio pozioni, cibo o pergamene."@it ;
+  rdfs:comment "Item that is used and typically depleted, such as potions, food, or scrolls."@en .
+
+sr:KeyItem a owl:Class ;
+  rdfs:subClassOf sr:Item ;
+  rdfs:label "Oggetto chiave"@it ;
+  rdfs:label "Key item"@en ;
+  rdfs:comment "Oggetto rilevante per la progressione, necessario per sbloccare porte, eventi, aree o stati del mondo."@it ;
+  rdfs:comment "Progression-relevant item required to unlock doors, events, areas, or world states."@en .
+
+sr:Faction a owl:Class ;
+  rdfs:label "Fazione"@it ;
+  rdfs:label "Faction"@en ;
+  rdfs:comment "Gruppo, schieramento o potere del mondo di gioco che struttura alleanze, ostilità e distribuzione delle entità."@it ;
+  rdfs:comment "Group, alignment, or power in the game world that structures alliances, hostilities, and entity distribution."@en .
+
+sr:Quest a owl:Class ;
+  rdfs:label "Quest"@it ;
+  rdfs:label "Quest"@en ;
+  rdfs:comment "Obiettivo o missione che connette attori, luoghi, prerequisiti e ricompense all’interno della progressione della run."@it ;
+  rdfs:comment "Goal or mission connecting actors, places, prerequisites, and rewards within the progression of a run."@en .
+
+sr:NPC a owl:Class ;
+  rdfs:label "Personaggio non giocante"@it ;
+  rdfs:label "Non-player character"@en ;
+  rdfs:comment "Entità non controllata dal giocatore che può offrire quest, informazioni, servizi o interazioni narrative."@it ;
+  rdfs:comment "Entity not controlled by the player that can offer quests, information, services, or narrative interactions."@en .
+
+sr:Portal a owl:Class ;
+  rdfs:label "Portale"@it ;
+  rdfs:label "Portal"@en ;
+  rdfs:comment "Elemento di transizione o blocco che collega aree e può richiedere condizioni o oggetti per consentire il passaggio."@it ;
+  rdfs:comment "Transition or gating element that connects areas and may require conditions or items to allow passage."@en .
+
+sr:Weapon owl:disjointWith sr:Consumable .
+sr:Room owl:disjointWith sr:Monster .
+sr:Quest owl:disjointWith sr:Item .
+
+### Object properties
+
+sr:locatedInBiome a owl:ObjectProperty ;
+  rdfs:domain sr:Room ;
+  rdfs:range sr:Biome ;
+  rdfs:label "si trova nel bioma"@it ;
+  rdfs:label "located in biome"@en ;
+  rdfs:comment "Collega una stanza al bioma a cui appartiene dal punto di vista ambientale o tematico."@it ;
+  rdfs:comment "Links a room to the biome it belongs to from an environmental or thematic perspective."@en .
+
+sr:connectedTo a owl:ObjectProperty ;
+  rdfs:domain sr:Room ;
+  rdfs:range sr:Room ;
+  rdfs:label "è collegata a"@it ;
+  rdfs:label "connected to"@en ;
+  rdfs:comment "Esprime una connessione navigabile o significativa tra due stanze del mondo di gioco."@it ;
+  rdfs:comment "Expresses a navigable or meaningful connection between two rooms in the game world."@en .
+
+sr:hostsMonster a owl:ObjectProperty ;
+  rdfs:domain sr:Room ;
+  rdfs:range sr:Monster ;
+  rdfs:label "ospita mostro"@it ;
+  rdfs:label "hosts monster"@en ;
+  rdfs:comment "Indica che una stanza contiene o può contenere un determinato mostro."@it ;
+  rdfs:comment "Indicates that a room contains or may contain a given monster."@en .
+
+sr:dropsItem a owl:ObjectProperty ;
+  rdfs:domain sr:Monster ;
+  rdfs:range sr:Item ;
+  rdfs:label "rilascia oggetto"@it ;
+  rdfs:label "drops item"@en ;
+  rdfs:comment "Collega un mostro agli oggetti che può lasciare come bottino o ricompensa."@it ;
+  rdfs:comment "Links a monster to the items it may leave as loot or reward."@en .
+
+sr:belongsToFaction a owl:ObjectProperty ;
+  rdfs:range sr:Faction ;
+  rdfs:label "appartiene alla fazione"@it ;
+  rdfs:label "belongs to faction"@en ;
+  rdfs:comment "Associa un’entità, come un mostro o un NPC, alla fazione di cui fa parte."@it ;
+  rdfs:comment "Associates an entity, such as a monster or an NPC, with the faction it belongs to."@en .
+
+sr:enemyOf a owl:ObjectProperty ;
+  rdfs:domain sr:Faction ;
+  rdfs:range sr:Faction ;
+  rdfs:label "nemica di"@it ;
+  rdfs:label "enemy of"@en ;
+  rdfs:comment "Esprime una relazione di ostilità tra due fazioni."@it ;
+  rdfs:comment "Expresses a hostile relationship between two factions."@en .
+
+sr:offersQuest a owl:ObjectProperty ;
+  rdfs:domain sr:NPC ;
+  rdfs:range sr:Quest ;
+  rdfs:label "offre quest"@it ;
+  rdfs:label "offers quest"@en ;
+  rdfs:comment "Indica che un personaggio non giocante propone o assegna una quest."@it ;
+  rdfs:comment "Indicates that a non-player character proposes or assigns a quest."@en .
+
+sr:requiresItem a owl:ObjectProperty ;
+  rdfs:domain sr:Portal ;
+  rdfs:range sr:Item ;
+  rdfs:label "richiede oggetto"@it ;
+  rdfs:label "requires item"@en ;
+  rdfs:comment "Specifica l’oggetto necessario per attivare, aprire o attraversare un portale."@it ;
+  rdfs:comment "Specifies the item needed to activate, open, or traverse a portal."@en .
+
+sr:unlocksRoom a owl:ObjectProperty ;
+  rdfs:domain sr:Portal ;
+  rdfs:range sr:Room ;
+  rdfs:label "sblocca stanza"@it ;
+  rdfs:label "unlocks room"@en ;
+  rdfs:comment "Collega un portale alla stanza che diventa accessibile quando il vincolo è soddisfatto."@it ;
+  rdfs:comment "Links a portal to the room that becomes accessible when its condition is satisfied."@en .
+
+sr:questTargetRoom a owl:ObjectProperty ;
+  rdfs:domain sr:Quest ;
+  rdfs:range sr:Room ;
+  rdfs:label "ha come stanza obiettivo"@it ;
+  rdfs:label "has target room"@en ;
+  rdfs:comment "Indica la stanza verso cui è orientato l’obiettivo principale della quest."@it ;
+  rdfs:comment "Indicates the room toward which the main objective of the quest is directed."@en .
+
+sr:questReward a owl:ObjectProperty ;
+  rdfs:domain sr:Quest ;
+  rdfs:range sr:Item ;
+  rdfs:label "ha come ricompensa"@it ;
+  rdfs:label "has reward"@en ;
+  rdfs:comment "Specifica l’oggetto dato come ricompensa per il completamento della quest."@it ;
+  rdfs:comment "Specifies the item granted as a reward for completing the quest."@en .
+
+### Datatype properties
+
+sr:dangerLevel a owl:DatatypeProperty ;
+  rdfs:domain sr:Room ;
+  rdfs:range xsd:integer ;
+  rdfs:label "livello di pericolo"@it ;
+  rdfs:label "danger level"@en ;
+  rdfs:comment "Valore numerico che stima la minaccia complessiva associata a una stanza."@it ;
+  rdfs:comment "Numeric value estimating the overall threat associated with a room."@en .
+
+sr:floorIndex a owl:DatatypeProperty ;
+  rdfs:domain sr:Room ;
+  rdfs:range xsd:integer ;
+  rdfs:label "indice del piano"@it ;
+  rdfs:label "floor index"@en ;
+  rdfs:comment "Numero che rappresenta il piano, strato o livello di profondità della stanza nella progressione."@it ;
+  rdfs:comment "Number representing the floor, layer, or depth level of the room in the progression."@en .
+
+sr:rarity a owl:DatatypeProperty ;
+  rdfs:domain sr:Item ;
+  rdfs:range xsd:integer ;
+  rdfs:label "rarità"@it ;
+  rdfs:label "rarity"@en ;
+  rdfs:comment "Valore numerico che esprime quanto un oggetto sia raro, prezioso o difficile da ottenere."@it ;
+  rdfs:comment "Numeric value expressing how rare, valuable, or difficult to obtain an item is."@en .
+
+sr:spawnWeight a owl:DatatypeProperty ;
+  rdfs:domain sr:Monster ;
+  rdfs:range xsd:integer ;
+  rdfs:label "peso di generazione"@it ;
+  rdfs:label "spawn weight"@en ;
+  rdfs:comment "Peso numerico usato dal motore per determinare con quale probabilità relativa un mostro venga selezionato."@it ;
+  rdfs:comment "Numeric weight used by the engine to determine the relative probability that a monster is selected."@en .
+
+sr:minPlayerLevel a owl:DatatypeProperty ;
+  rdfs:domain sr:Monster ;
+  rdfs:range xsd:integer ;
+  rdfs:label "livello minimo del giocatore"@it ;
+  rdfs:label "minimum player level"@en ;
+  rdfs:comment "Livello minimo consigliato o richiesto del giocatore per incontrare in modo appropriato quel mostro."@it ;
+  rdfs:comment "Recommended or required minimum player level for the player to encounter that monster appropriately."@en .
