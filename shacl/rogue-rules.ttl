@@ -55,6 +55,16 @@ sr:RoomShape a sh:NodeShape ;
     sh:name "floor index"@en ;
     sh:description "Ogni stanza deve indicare il piano o livello di profondità a cui appartiene nella struttura del dungeon."@it ;
     sh:description "Each room must indicate the floor or depth level it belongs to in the dungeon structure."@en ;
+  ] ;
+
+  sh:property [
+    sh:path sr:isStartRoom ;
+    sh:maxCount 1 ;
+    sh:datatype xsd:boolean ;
+    sh:name "flag stanza iniziale"@it ;
+    sh:name "start room flag"@en ;
+    sh:description "Il flag di stanza iniziale, se presente, è un booleano singolo."@it ;
+    sh:description "The start-room flag, when present, is a single boolean."@en ;
   ] .
 
 sr:ConnectedRoomShape a sh:NodeShape ;
@@ -142,6 +152,17 @@ sr:PortalShape a sh:NodeShape ;
     sh:name "unlocked room"@en ;
     sh:description "Ogni portale deve indicare quale stanza rende accessibile una volta soddisfatta la condizione."@it ;
     sh:description "Each portal must indicate which room becomes accessible once the condition is met."@en ;
+  ] ;
+
+  sh:property [
+    sh:path sr:portalInRoom ;
+    sh:minCount 1 ;
+    sh:maxCount 1 ;
+    sh:class sr:Room ;
+    sh:name "stanza del portale"@it ;
+    sh:name "portal room"@en ;
+    sh:description "Ogni portale deve trovarsi in esattamente una stanza, altrimenti non è attraversabile."@it ;
+    sh:description "Each portal must be located in exactly one room, otherwise it cannot be traversed."@en ;
   ] .
 
 sr:QuestShape a sh:NodeShape ;

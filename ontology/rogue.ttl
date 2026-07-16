@@ -165,6 +165,14 @@ sr:unlocksRoom a owl:ObjectProperty ;
   rdfs:comment "Collega un portale alla stanza che diventa accessibile quando il vincolo è soddisfatto."@it ;
   rdfs:comment "Links a portal to the room that becomes accessible when its condition is satisfied."@en .
 
+sr:portalInRoom a owl:ObjectProperty ;
+  rdfs:domain sr:Portal ;
+  rdfs:range sr:Room ;
+  rdfs:label "si trova nella stanza"@it ;
+  rdfs:label "located in room"@en ;
+  rdfs:comment "Indica la stanza in cui il portale è fisicamente collocato e da cui lo si attraversa."@it ;
+  rdfs:comment "Indicates the room where the portal is physically located and from which it is traversed."@en .
+
 sr:questTargetRoom a owl:ObjectProperty ;
   rdfs:domain sr:Quest ;
   rdfs:range sr:Room ;
@@ -198,6 +206,14 @@ sr:floorIndex a owl:DatatypeProperty ;
   rdfs:label "floor index"@en ;
   rdfs:comment "Numero che rappresenta il piano, strato o livello di profondità della stanza nella progressione."@it ;
   rdfs:comment "Number representing the floor, layer, or depth level of the room in the progression."@en .
+
+sr:isStartRoom a owl:DatatypeProperty ;
+  rdfs:domain sr:Room ;
+  rdfs:range xsd:boolean ;
+  rdfs:label "è la stanza iniziale"@it ;
+  rdfs:label "is start room"@en ;
+  rdfs:comment "Vero per la stanza in cui il giocatore inizia la run; la raggiungibilità del mondo si calcola da qui."@it ;
+  rdfs:comment "True for the room where the player starts the run; world reachability is computed from here."@en .
 
 sr:rarity a owl:DatatypeProperty ;
   rdfs:domain sr:Item ;

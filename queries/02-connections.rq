@@ -1,11 +1,24 @@
-# Mappa dei collegamenti diretti fra stanze.
-# Risponde a: "da quale stanza si va dove?"
+# Mappa dei collegamenti fra stanze: passaggi aperti e portali con condizione.
+# Risponde a: "da quale stanza si va dove, e cosa serve per passare?"
 PREFIX sr:   <http://example.org/semantic-roguelike#>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 
-SELECT ?da ?a
+SELECT ?da ?a ?tipo ?serve
 WHERE {
-  ?r1 sr:connectedTo ?r2 .
+  {
+    ?r1 sr:connectedTo ?r2 .
+    BIND("passaggio aperto" AS ?tipo)
+  }
+  UNION
+  {
+    ?p a sr:Portal ;
+       sr:portalInRoom ?r1 ;
+       sr:unlocksRoom ?r2 ;
+       sr:requiresItem ?item .
+    ?item rdfs:label ?serve .
+    FILTER(lang(?serve) = "it")
+    BIND("portale" AS ?tipo)
+  }
   ?r1 rdfs:label ?da .
   ?r2 rdfs:label ?a .
   FILTER(lang(?da) = "it" && lang(?a) = "it")

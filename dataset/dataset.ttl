@@ -40,7 +40,8 @@ ex:hall08 a sr:Room ;
   rdfs:comment "Corridor or transition hall connected to the main crypt, useful for expanding the topology of the level."@en ;
   sr:locatedInBiome ex:catacomb ;
   sr:dangerLevel 3 ;
-  sr:floorIndex 2 .
+  sr:floorIndex 2 ;
+  sr:connectedTo ex:fungalHollow01 .
 
 ex:ivoryKey a sr:KeyItem ;
   rdfs:label "Chiave d'Avorio"@it ;
@@ -65,7 +66,8 @@ ex:sealedGate a sr:Portal ;
   rdfs:comment "Portale bloccato che richiede la Chiave d'Avorio per consentire il passaggio verso l’area successiva."@it ;
   rdfs:comment "Locked portal that requires the Ivory Key to allow passage to the next area."@en ;
   sr:requiresItem ex:ivoryKey ;
-  sr:unlocksRoom ex:sanctum01 .
+  sr:unlocksRoom ex:sanctum01 ;
+  sr:portalInRoom ex:crypt07 .
 
 ex:sanctum01 a sr:Room ;
   rdfs:label "Santuario 01"@it ;
@@ -108,3 +110,207 @@ ex:cryptTyrant a sr:Boss ;
   sr:dropsItem ex:tyrantSigil ;
   sr:spawnWeight 3 ;
   sr:minPlayerLevel 4 .
+
+### Espansione Fase 1 — biomi e fazioni
+
+ex:fungalCaves a sr:Biome ;
+  rdfs:label "Grotte Fungine"@it ;
+  rdfs:label "Fungal Caves"@en ;
+  rdfs:comment "Bioma umido di caverne invase da miceli, spore luminescenti e creature simbiotiche."@it ;
+  rdfs:comment "Damp biome of caverns overgrown with mycelium, glowing spores, and symbiotic creatures."@en .
+
+ex:sporeMind a sr:Faction ;
+  rdfs:label "Mente Sporale"@it ;
+  rdfs:label "Spore Mind"@en ;
+  rdfs:comment "Coscienza collettiva fungina che governa le creature delle Grotte Fungine."@it ;
+  rdfs:comment "Fungal collective consciousness ruling the creatures of the Fungal Caves."@en ;
+  sr:enemyOf ex:playerFaction .
+
+### Espansione Fase 1 — stanze
+
+ex:entrance01 a sr:Room ;
+  rdfs:label "Ingresso delle Catacombe"@it ;
+  rdfs:label "Catacombs Entrance"@en ;
+  rdfs:comment "Punto di partenza della run: un atrio franato che scende verso l'ossario."@it ;
+  rdfs:comment "Starting point of the run: a collapsed atrium descending toward the ossuary."@en ;
+  sr:locatedInBiome ex:catacomb ;
+  sr:dangerLevel 1 ;
+  sr:floorIndex 1 ;
+  sr:isStartRoom true ;
+  sr:connectedTo ex:ossuary02 .
+
+ex:ossuary02 a sr:Room ;
+  rdfs:label "Ossario 02"@it ;
+  rdfs:label "Ossuary 02"@en ;
+  rdfs:comment "Deposito di ossa antiche infestato da parassiti, primo vero ostacolo della discesa."@it ;
+  rdfs:comment "Repository of ancient bones infested with vermin, first real obstacle of the descent."@en ;
+  sr:locatedInBiome ex:catacomb ;
+  sr:dangerLevel 2 ;
+  sr:floorIndex 1 ;
+  sr:connectedTo ex:crypt07 ;
+  sr:hostsMonster ex:cryptRat .
+
+ex:fungalHollow01 a sr:Room ;
+  rdfs:label "Cavità Fungina"@it ;
+  rdfs:label "Fungal Hollow"@en ;
+  rdfs:comment "Prima caverna delle Grotte Fungine, dove il micelio comincia a coprire le pareti."@it ;
+  rdfs:comment "First cavern of the Fungal Caves, where mycelium begins to cover the walls."@en ;
+  sr:locatedInBiome ex:fungalCaves ;
+  sr:dangerLevel 4 ;
+  sr:floorIndex 2 ;
+  sr:connectedTo ex:sporeNest02 ;
+  sr:hostsMonster ex:sporeCrawler .
+
+ex:sporeNest02 a sr:Room ;
+  rdfs:label "Nido di Spore"@it ;
+  rdfs:label "Spore Nest"@en ;
+  rdfs:comment "Cuore pulsante delle Grotte Fungine, dove nidifica la Madre delle Spore e si apre il Sigillo Miceliale."@it ;
+  rdfs:comment "Beating heart of the Fungal Caves, nesting place of the Spore Mother and site of the Mycelial Seal."@en ;
+  sr:locatedInBiome ex:fungalCaves ;
+  sr:dangerLevel 5 ;
+  sr:floorIndex 3 ;
+  sr:hostsMonster ex:myceliumBrute ;
+  sr:hostsMonster ex:sporeMother .
+
+ex:throneVault01 a sr:Room ;
+  rdfs:label "Cripta del Trono"@it ;
+  rdfs:label "Throne Vault"@en ;
+  rdfs:comment "Sala più profonda del dungeon, sigillata dal Sigillo Miceliale, dove siede il Re Morto."@it ;
+  rdfs:comment "Deepest hall of the dungeon, sealed by the Mycelial Seal, where the Dead King sits."@en ;
+  sr:locatedInBiome ex:catacomb ;
+  sr:dangerLevel 8 ;
+  sr:floorIndex 4 ;
+  sr:hostsMonster ex:deadKing .
+
+### Espansione Fase 1 — mostri
+
+ex:cryptRat a sr:Monster ;
+  rdfs:label "Ratto delle Cripte"@it ;
+  rdfs:label "Crypt Rat"@en ;
+  rdfs:comment "Parassita comune delle catacombe, pericoloso solo in branco."@it ;
+  rdfs:comment "Common vermin of the catacombs, dangerous only in packs."@en ;
+  sr:belongsToFaction ex:deadCourt ;
+  sr:dropsItem ex:rustSword ;
+  sr:spawnWeight 20 ;
+  sr:minPlayerLevel 1 .
+
+ex:sporeCrawler a sr:Monster ;
+  rdfs:label "Strisciante di Spore"@it ;
+  rdfs:label "Spore Crawler"@en ;
+  rdfs:comment "Creatura simbiotica che pattuglia i cunicoli fungini rilasciando spore curative alla morte."@it ;
+  rdfs:comment "Symbiotic creature patrolling the fungal tunnels, releasing healing spores on death."@en ;
+  sr:belongsToFaction ex:sporeMind ;
+  sr:dropsItem ex:healingMoss ;
+  sr:spawnWeight 15 ;
+  sr:minPlayerLevel 2 .
+
+ex:myceliumBrute a sr:Monster ;
+  rdfs:label "Bruto di Micelio"@it ;
+  rdfs:label "Mycelium Brute"@en ;
+  rdfs:comment "Massa fungina semi-senziente che difende il nido con la forza."@it ;
+  rdfs:comment "Semi-sentient fungal mass defending the nest with brute force."@en ;
+  sr:belongsToFaction ex:sporeMind ;
+  sr:dropsItem ex:mossAmulet ;
+  sr:spawnWeight 6 ;
+  sr:minPlayerLevel 3 .
+
+ex:sporeMother a sr:Boss ;
+  rdfs:label "Madre delle Spore"@it ;
+  rdfs:label "Spore Mother"@en ;
+  rdfs:comment "Boss delle Grotte Fungine: custodisce nel proprio corpo il Cuore di Spore che apre il Sigillo Miceliale."@it ;
+  rdfs:comment "Boss of the Fungal Caves: carries within her body the Spore Heart that opens the Mycelial Seal."@en ;
+  sr:belongsToFaction ex:sporeMind ;
+  sr:dropsItem ex:sporeHeart ;
+  sr:spawnWeight 2 ;
+  sr:minPlayerLevel 4 .
+
+ex:deadKing a sr:Boss ;
+  rdfs:label "Re Morto"@it ;
+  rdfs:label "Dead King"@en ;
+  rdfs:comment "Sovrano della Corte dei Morti e boss finale del dungeon, custode della Reliquia dell'Alba."@it ;
+  rdfs:comment "Sovereign of the Dead Court and final boss of the dungeon, keeper of the Relic of Dawn."@en ;
+  sr:belongsToFaction ex:deadCourt ;
+  sr:dropsItem ex:relicOfDawn ;
+  sr:spawnWeight 1 ;
+  sr:minPlayerLevel 5 .
+
+### Espansione Fase 1 — oggetti
+
+ex:rustSword a sr:Weapon ;
+  rdfs:label "Spada Arrugginita"@it ;
+  rdfs:label "Rusty Sword"@en ;
+  rdfs:comment "Arma di fortuna recuperata tra le ossa, meglio di niente."@it ;
+  rdfs:comment "Makeshift weapon scavenged among the bones, better than nothing."@en ;
+  sr:rarity 2 .
+
+ex:boneBlade a sr:Weapon ;
+  rdfs:label "Lama d'Osso"@it ;
+  rdfs:label "Bone Blade"@en ;
+  rdfs:comment "Lama rituale intagliata in un femore consacrato, premio per chi ripulisce il nido."@it ;
+  rdfs:comment "Ritual blade carved from a consecrated femur, reward for cleansing the nest."@en ;
+  sr:rarity 5 .
+
+ex:healingMoss a sr:Consumable ;
+  rdfs:label "Muschio Curativo"@it ;
+  rdfs:label "Healing Moss"@en ;
+  rdfs:comment "Ciuffo di muschio simbiotico che rimargina le ferite."@it ;
+  rdfs:comment "Tuft of symbiotic moss that mends wounds."@en ;
+  sr:rarity 1 .
+
+ex:embalmerTonic a sr:Consumable ;
+  rdfs:label "Tonico dell'Imbalsamatore"@it ;
+  rdfs:label "Embalmer's Tonic"@en ;
+  rdfs:comment "Distillato rituale che rinvigorisce i vivi, pensato per i morti."@it ;
+  rdfs:comment "Ritual distillate that invigorates the living, intended for the dead."@en ;
+  sr:rarity 3 .
+
+ex:graveLantern a sr:Item ;
+  rdfs:label "Lanterna Tombale"@it ;
+  rdfs:label "Grave Lantern"@en ;
+  rdfs:comment "Lanterna funeraria che arde senza olio, bottino del Tiranno della Cripta."@it ;
+  rdfs:comment "Funerary lantern that burns without oil, loot of the Crypt Tyrant."@en ;
+  sr:rarity 3 .
+
+ex:mossAmulet a sr:Item ;
+  rdfs:label "Amuleto di Muschio"@it ;
+  rdfs:label "Moss Amulet"@en ;
+  rdfs:comment "Talismano vivo intrecciato di micelio, dono riluttante della Mente Sporale."@it ;
+  rdfs:comment "Living talisman woven from mycelium, a reluctant gift of the Spore Mind."@en ;
+  sr:rarity 4 .
+
+ex:sporeHeart a sr:KeyItem ;
+  rdfs:label "Cuore di Spore"@it ;
+  rdfs:label "Spore Heart"@en ;
+  rdfs:comment "Nucleo pulsante della Madre delle Spore, unica chiave del Sigillo Miceliale."@it ;
+  rdfs:comment "Pulsing core of the Spore Mother, sole key to the Mycelial Seal."@en ;
+  sr:rarity 6 .
+
+ex:relicOfDawn a sr:Item ;
+  rdfs:label "Reliquia dell'Alba"@it ;
+  rdfs:label "Relic of Dawn"@en ;
+  rdfs:comment "Antico manufatto luminoso conteso tra i vivi e la Corte dei Morti, tesoro finale del dungeon."@it ;
+  rdfs:comment "Ancient radiant artifact contested between the living and the Dead Court, final treasure of the dungeon."@en ;
+  sr:rarity 9 .
+
+ex:cryptTyrant sr:dropsItem ex:graveLantern .
+
+### Espansione Fase 1 — portali e quest
+
+ex:mycelialSeal a sr:Portal ;
+  rdfs:label "Sigillo Miceliale"@it ;
+  rdfs:label "Mycelial Seal"@en ;
+  rdfs:comment "Barriera organica viva che chiude l'accesso alla Cripta del Trono; cede solo al Cuore di Spore."@it ;
+  rdfs:comment "Living organic barrier sealing the way to the Throne Vault; yields only to the Spore Heart."@en ;
+  sr:portalInRoom ex:sporeNest02 ;
+  sr:requiresItem ex:sporeHeart ;
+  sr:unlocksRoom ex:throneVault01 .
+
+ex:endTheCourt a sr:Quest ;
+  rdfs:label "Poni Fine alla Corte"@it ;
+  rdfs:label "End the Court"@en ;
+  rdfs:comment "Quest finale: raggiungere la Cripta del Trono e spodestare il Re Morto per ottenere la Reliquia dell'Alba."@it ;
+  rdfs:comment "Final quest: reach the Throne Vault and unseat the Dead King to claim the Relic of Dawn."@en ;
+  sr:questTargetRoom ex:throneVault01 ;
+  sr:questReward ex:relicOfDawn .
+
+ex:graveHermit sr:offersQuest ex:endTheCourt .
