@@ -281,8 +281,80 @@ sr:RequiredKeyMustExistInWorld a sh:NodeShape ;
       SELECT $this
       WHERE {
         $this sr:requiresItem ?k .
+        # Nota: due NOT EXISTS separati invece di NOT EXISTS { A UNION B }:
+        # logicamente equivalenti, ma il secondo costrutto è valutato male da rdflib.
+        FILTER NOT EXISTS { ?monster sr:dropsItem ?k . }
+        FILTER NOT EXISTS { ?quest sr:questReward ?k . }
+      }
+    """ ;
+  ] .
+
+sr:OrphanKeyShape a sh:NodeShape ;
+  sh:targetClass sr:KeyItem ;
+  rdfs:label "Nessuna chiave orfana"@it ;
+  rdfs:label "No orphan keys"@en ;
+  rdfs:comment "Shape SPARQL-based: ogni oggetto chiave deve avere almeno una fonte nel mondo, come drop di un mostro o ricompensa di una quest."@it ;
+  rdfs:comment "SPARQL-based shape: every key item must have at least one source in the world, either as a monster drop or as a quest reward."@en ;
+  sh:sparql [
+    sh:prefixes sr:RogueShapes ;
+    sh:message "Ogni oggetto chiave deve essere ottenibile: droppato da un mostro o ricompensa di una quest."@it ;
+    sh:message "Every key item must be obtainable: dropped by a monster or rewarded by a quest."@en ;
+    sh:select """
+      SELECT $this
+      WHERE {
+        FILTER NOT EXISTS { ?monster sr:dropsItem $this . }
+        FILTER NOT EXISTS { ?quest sr:questReward $this . }
+      }
+    """ ;
+  ] .
+
+sr:UnreachableRoomShape a sh:NodeShape ;
+  sh:targetClass sr:Room ;
+  rdfs:label "Nessuna stanza irraggiungibile"@it ;
+  rdfs:label "No unreachable rooms"@en ;
+  rdfs:comment "Shape SPARQL-based: ogni stanza deve essere raggiungibile dalla stanza iniziale attraversando connessioni (in entrambi i versi) o portali."@it ;
+  rdfs:comment "SPARQL-based shape: every room must be reachable from the start room by traversing connections (in both directions) or portals."@en ;
+  sh:sparql [
+    sh:prefixes sr:RogueShapes ;
+    sh:message "La stanza non è raggiungibile dalla stanza iniziale: collegala o rimuovila."@it ;
+    sh:message "The room is not reachable from the start room: connect it or remove it."@en ;
+    sh:select """
+      SELECT $this
+      WHERE {
         FILTER NOT EXISTS {
-          ?monster sr:dropsItem ?k .
+          ?start sr:isStartRoom true .
+          ?start (sr:connectedTo|^sr:connectedTo|(^sr:portalInRoom/sr:unlocksRoom))* $this .
+        }
+      }
+    """ ;
+  ] .
+
+sr:LockKeyCycleShape a sh:NodeShape ;
+  sh:targetClass sr:Portal ;
+  rdfs:label "Nessuna dipendenza circolare lock-key"@it ;
+  rdfs:label "No circular lock-key dependency"@en ;
+  rdfs:comment "Shape SPARQL-based: la chiave di un portale deve avere almeno una fonte collocata fuori dalla stanza che il portale sblocca, altrimenti la chiave è irraggiungibile senza sé stessa."@it ;
+  rdfs:comment "SPARQL-based shape: a portal's key must have at least one source located outside the room the portal unlocks, otherwise the key is unreachable without itself."@en ;
+  sh:sparql [
+    sh:prefixes sr:RogueShapes ;
+    sh:message "La chiave di questo portale si ottiene solo oltre il portale stesso: dipendenza circolare."@it ;
+    sh:message "This portal's key can only be obtained beyond the portal itself: circular dependency."@en ;
+    sh:select """
+      SELECT $this
+      WHERE {
+        $this sr:requiresItem ?key ;
+              sr:unlocksRoom ?locked .
+        # Nota: due NOT EXISTS separati invece di NOT EXISTS { A UNION B }:
+        # logicamente equivalenti, ma il secondo costrutto è valutato male da rdflib.
+        FILTER NOT EXISTS {
+          ?monster sr:dropsItem ?key .
+          ?source sr:hostsMonster ?monster .
+          FILTER(?source != ?locked)
+        }
+        FILTER NOT EXISTS {
+          ?quest sr:questReward ?key ;
+                 sr:questTargetRoom ?target .
+          FILTER(?target != ?locked)
         }
       }
     """ ;

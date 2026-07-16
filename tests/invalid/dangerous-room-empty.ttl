@@ -1,0 +1,12 @@
+# Caso rotto: stanza molto pericolosa senza mostri (viola sr:DangerousRoomMustHaveContent).
+@prefix sr:   <http://example.org/semantic-roguelike#> .
+@prefix ex:   <http://example.org/id/> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+ex:testBiome a sr:Biome .
+
+ex:brokenRoom a sr:Room ;
+  sr:isStartRoom true ;
+  sr:locatedInBiome ex:testBiome ;
+  sr:dangerLevel 7 ;
+  sr:floorIndex 1 .

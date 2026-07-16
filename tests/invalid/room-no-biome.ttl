@@ -1,0 +1,9 @@
+# Caso rotto: stanza senza bioma (viola sr:RoomShape su sr:locatedInBiome).
+@prefix sr:   <http://example.org/semantic-roguelike#> .
+@prefix ex:   <http://example.org/id/> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+ex:brokenRoom a sr:Room ;
+  sr:isStartRoom true ;
+  sr:dangerLevel 2 ;
+  sr:floorIndex 1 .

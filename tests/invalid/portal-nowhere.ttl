@@ -1,0 +1,34 @@
+# Caso rotto: portale senza stanza che lo ospita (viola sr:PortalShape su sr:portalInRoom).
+@prefix sr:   <http://example.org/semantic-roguelike#> .
+@prefix ex:   <http://example.org/id/> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+ex:testBiome a sr:Biome .
+
+ex:roomA a sr:Room ;
+  sr:isStartRoom true ;
+  sr:locatedInBiome ex:testBiome ;
+  sr:dangerLevel 1 ;
+  sr:floorIndex 1 ;
+  sr:connectedTo ex:roomB ;
+  sr:hostsMonster ex:testMonster .
+
+ex:roomB a sr:Room ;
+  sr:locatedInBiome ex:testBiome ;
+  sr:dangerLevel 1 ;
+  sr:floorIndex 1 .
+
+ex:testKey a sr:Item ;
+  sr:rarity 3 .
+
+ex:testFaction a sr:Faction .
+
+ex:testMonster a sr:Monster ;
+  sr:belongsToFaction ex:testFaction ;
+  sr:spawnWeight 1 ;
+  sr:minPlayerLevel 1 ;
+  sr:dropsItem ex:testKey .
+
+ex:brokenPortal a sr:Portal ;
+  sr:requiresItem ex:testKey ;
+  sr:unlocksRoom ex:roomB .

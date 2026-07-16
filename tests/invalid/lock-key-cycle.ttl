@@ -1,0 +1,35 @@
+# Caso rotto: l'unica fonte della chiave sta nella stanza sbloccata dal portale stesso
+# (viola sr:LockKeyCycleShape).
+@prefix sr:   <http://example.org/semantic-roguelike#> .
+@prefix ex:   <http://example.org/id/> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+ex:testBiome a sr:Biome .
+
+ex:startRoom a sr:Room ;
+  sr:isStartRoom true ;
+  sr:locatedInBiome ex:testBiome ;
+  sr:dangerLevel 1 ;
+  sr:floorIndex 1 .
+
+ex:lockedRoom a sr:Room ;
+  sr:locatedInBiome ex:testBiome ;
+  sr:dangerLevel 6 ;
+  sr:floorIndex 2 ;
+  sr:hostsMonster ex:keyHolder .
+
+ex:cycleKey a sr:KeyItem ;
+  sr:rarity 5 .
+
+ex:testFaction a sr:Faction .
+
+ex:keyHolder a sr:Monster ;
+  sr:belongsToFaction ex:testFaction ;
+  sr:spawnWeight 1 ;
+  sr:minPlayerLevel 1 ;
+  sr:dropsItem ex:cycleKey .
+
+ex:cyclePortal a sr:Portal ;
+  sr:portalInRoom ex:startRoom ;
+  sr:requiresItem ex:cycleKey ;
+  sr:unlocksRoom ex:lockedRoom .

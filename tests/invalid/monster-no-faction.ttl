@@ -1,0 +1,8 @@
+# Caso rotto: mostro senza fazione (viola sr:MonsterShape su sr:belongsToFaction).
+@prefix sr:   <http://example.org/semantic-roguelike#> .
+@prefix ex:   <http://example.org/id/> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+ex:brokenMonster a sr:Monster ;
+  sr:spawnWeight 5 ;
+  sr:minPlayerLevel 1 .

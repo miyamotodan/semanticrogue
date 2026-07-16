@@ -1,0 +1,20 @@
+# Caso rotto: livello di pericolo fuori range 1-10 (viola sr:RoomShape su sr:dangerLevel).
+@prefix sr:   <http://example.org/semantic-roguelike#> .
+@prefix ex:   <http://example.org/id/> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+ex:testBiome a sr:Biome .
+
+ex:brokenRoom a sr:Room ;
+  sr:isStartRoom true ;
+  sr:locatedInBiome ex:testBiome ;
+  sr:dangerLevel 15 ;
+  sr:floorIndex 1 ;
+  sr:hostsMonster ex:filler .
+
+ex:testFaction a sr:Faction .
+
+ex:filler a sr:Monster ;
+  sr:belongsToFaction ex:testFaction ;
+  sr:spawnWeight 1 ;
+  sr:minPlayerLevel 1 .

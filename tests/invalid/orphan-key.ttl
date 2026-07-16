@@ -1,0 +1,7 @@
+# Caso rotto: oggetto chiave senza alcuna fonte nel mondo (viola sr:OrphanKeyShape).
+@prefix sr:   <http://example.org/semantic-roguelike#> .
+@prefix ex:   <http://example.org/id/> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+ex:orphanKey a sr:KeyItem ;
+  sr:rarity 4 .

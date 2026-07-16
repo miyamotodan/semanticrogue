@@ -1,0 +1,11 @@
+# Caso rotto: boss senza bottino (viola sr:BossPlacementShape su sr:dropsItem).
+@prefix sr:   <http://example.org/semantic-roguelike#> .
+@prefix ex:   <http://example.org/id/> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+ex:testFaction a sr:Faction .
+
+ex:brokenBoss a sr:Boss ;
+  sr:belongsToFaction ex:testFaction ;
+  sr:spawnWeight 1 ;
+  sr:minPlayerLevel 3 .
