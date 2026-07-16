@@ -1,0 +1,25 @@
+# Catena lock-key: portale -> chiave richiesta -> chi la droppa -> in quale stanza.
+# Risponde a: "dove ottengo la chiave che apre questo portale?"
+PREFIX sr:   <http://example.org/semantic-roguelike#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+SELECT ?portale ?chiave ?droppataDa ?stanzaDrop ?stanzaSbloccata
+WHERE {
+  ?p a sr:Portal ;
+     rdfs:label ?portale ;
+     sr:requiresItem ?k ;
+     sr:unlocksRoom ?locked .
+  ?k rdfs:label ?chiave .
+  ?locked rdfs:label ?stanzaSbloccata .
+  OPTIONAL {
+    ?m sr:dropsItem ?k ;
+       rdfs:label ?droppataDa .
+    FILTER(lang(?droppataDa) = "it")
+    OPTIONAL {
+      ?room sr:hostsMonster ?m ;
+            rdfs:label ?stanzaDrop .
+      FILTER(lang(?stanzaDrop) = "it")
+    }
+  }
+  FILTER(lang(?portale) = "it" && lang(?chiave) = "it" && lang(?stanzaSbloccata) = "it")
+}

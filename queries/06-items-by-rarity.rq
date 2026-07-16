@@ -1,0 +1,15 @@
+# Oggetti ordinati per rarita', con il tipo piu' specifico.
+# Il path rdfs:subClassOf* mostra perche' l'ontologia deve stare nel grafo.
+PREFIX sr:   <http://example.org/semantic-roguelike#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+SELECT ?oggetto ?tipo ?rarita
+WHERE {
+  ?i a ?cls ;
+     rdfs:label ?oggetto ;
+     sr:rarity ?rarita .
+  ?cls rdfs:subClassOf* sr:Item ;
+       rdfs:label ?tipo .
+  FILTER(lang(?oggetto) = "it" && lang(?tipo) = "it")
+}
+ORDER BY DESC(?rarita) ?oggetto

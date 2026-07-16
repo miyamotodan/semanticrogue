@@ -1,0 +1,13 @@
+# Mappa dei collegamenti diretti fra stanze.
+# Risponde a: "da quale stanza si va dove?"
+PREFIX sr:   <http://example.org/semantic-roguelike#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+SELECT ?da ?a
+WHERE {
+  ?r1 sr:connectedTo ?r2 .
+  ?r1 rdfs:label ?da .
+  ?r2 rdfs:label ?a .
+  FILTER(lang(?da) = "it" && lang(?a) = "it")
+}
+ORDER BY ?da

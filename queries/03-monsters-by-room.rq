@@ -1,0 +1,15 @@
+# Mostri per stanza, con fazione e livello minimo del giocatore.
+# Risponde a: "chi incontro e dove, e sono pronto per farlo?"
+PREFIX sr:   <http://example.org/semantic-roguelike#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+SELECT ?stanza ?mostro ?fazione ?livelloMinimo
+WHERE {
+  ?room sr:hostsMonster ?m ;
+        rdfs:label ?stanza .
+  ?m rdfs:label ?mostro ;
+     sr:belongsToFaction/rdfs:label ?fazione ;
+     sr:minPlayerLevel ?livelloMinimo .
+  FILTER(lang(?stanza) = "it" && lang(?mostro) = "it" && lang(?fazione) = "it")
+}
+ORDER BY ?stanza ?mostro

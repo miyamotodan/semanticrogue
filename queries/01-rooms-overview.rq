@@ -1,0 +1,15 @@
+# Panoramica delle stanze: bioma, livello di pericolo e piano.
+# Risponde a: "com'è fatta la mappa, piano per piano?"
+PREFIX sr:   <http://example.org/semantic-roguelike#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+SELECT ?stanza ?bioma ?pericolo ?piano
+WHERE {
+  ?room a sr:Room ;
+        rdfs:label ?stanza ;
+        sr:locatedInBiome/rdfs:label ?bioma ;
+        sr:dangerLevel ?pericolo ;
+        sr:floorIndex ?piano .
+  FILTER(lang(?stanza) = "it" && lang(?bioma) = "it")
+}
+ORDER BY ?piano ?pericolo

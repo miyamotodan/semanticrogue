@@ -1,0 +1,21 @@
+# Quadro delle quest: chi le offre, dove portano, cosa premiano.
+# Risponde a: "quali missioni esistono e valgono la pena?"
+PREFIX sr:   <http://example.org/semantic-roguelike#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+SELECT ?quest ?offertaDa ?stanzaObiettivo ?ricompensa ?rarita
+WHERE {
+  ?q a sr:Quest ;
+     rdfs:label ?quest ;
+     sr:questTargetRoom/rdfs:label ?stanzaObiettivo ;
+     sr:questReward ?r .
+  ?r rdfs:label ?ricompensa ;
+     sr:rarity ?rarita .
+  OPTIONAL {
+    ?npc sr:offersQuest ?q ;
+         rdfs:label ?offertaDa .
+    FILTER(lang(?offertaDa) = "it")
+  }
+  FILTER(lang(?quest) = "it" && lang(?stanzaObiettivo) = "it" && lang(?ricompensa) = "it")
+}
+ORDER BY DESC(?rarita)
