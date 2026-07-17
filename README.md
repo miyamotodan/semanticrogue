@@ -70,7 +70,7 @@ python -m pytest -v              # con dettaglio per test
 python -m pytest tests/test_validation.py::test_authored_dataset_conforms -v   # un solo test
 ```
 
-La suite (67 test) verifica che i file Turtle si carichino, che il dataset authored sia conforme alle shape, che ogni query restituisca risultati, che ognuno dei casi rotti in `tests/invalid/` venga intercettato dalla shape giusta, il motore (`tools/engine.py`), la validazione runtime su stati rotti ad arte, la CLI `tools.play` (incluso il resume di un salvataggio non conforme, exit 3) e run end-to-end vincenti/perdenti.
+La suite (81 test) verifica che i file Turtle si carichino, che il dataset authored sia conforme alle shape, che ogni query restituisca risultati, che ognuno dei casi rotti in `tests/invalid/` venga intercettato dalla shape giusta, il motore (`tools/engine.py`), la validazione runtime su stati rotti ad arte, la CLI `tools.play` (incluso il resume di un salvataggio non conforme, exit 3), la mappa (`tools.map`, fog-of-war incluso) e run end-to-end vincenti/perdenti.
 
 ### Giocare una run
 
@@ -122,7 +122,7 @@ python -m tools.map --save runtime/save.ttl -o mappa.md   # con lo stato della p
 | `--save FILE.ttl` | sovrappone lo stato di una partita (default `runtime/save.ttl` se esiste) |
 | `-o FILE.md` | scrive un file markdown invece di stampare su stdout |
 
-La mappa raggruppa le stanze per piano e mostra mostri (👹/👑, ☠ se sconfitti), NPC (🧙), portali (🔒 chiusi, 🔓 aperti), la stanza del player (🧝, evidenziata) e lo stato delle quest. Exit code: `0` ok · `2` errore di parsing.
+La mappa raggruppa le stanze per piano e mostra mostri (👹/👑, ☠ se sconfitti), NPC (🧙), portali (🔒 chiusi, 🔓 aperti), la stanza del player (🧝, evidenziata) e lo stato delle quest. Con un salvataggio (partita in corso) è attivo il fog-of-war: le stanze già visitate mostrano nome e contenuto, quelle ancora ignote appaiono come nodi scuri anonimi (`???`) — resta visibile la topologia (dove si può andare), non cosa contengono. Senza salvataggio la mappa del mondo authored è completa. Exit code: `0` ok · `2` errore di parsing.
 
 ## Struttura del progetto
 
