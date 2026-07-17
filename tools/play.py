@@ -3,7 +3,8 @@
 Uso: python -m tools.play [--new] [--seed N] [--save FILE.ttl] [--config FILE.toml]
 Comandi: vai <stanza> | apri <portale> | combatti [mostro] | parla <npc>
          valida | stato | esci
-Exit code: 0 = run terminata o uscita, 2 = errore config/parsing, 3 = violazione runtime.
+Exit code: 0 = run terminata o uscita, 2 = errore config/parsing,
+           3 = stato runtime non conforme (al resume o dopo una transizione).
 """
 import argparse
 import sys
@@ -44,7 +45,7 @@ def show_turn(eng: Engine) -> None:
     print(f"\n== {label_it(g, room)} ==")
     for row in eng.run_query("monsters-here.rq"):
         print(f"  Mostro: {label_it(g, row.mostro)}")
-    for npc in {row.npc for row in eng.run_query("npcs-here.rq")}:
+    for npc in sorted({row.npc for row in eng.run_query("npcs-here.rq")}, key=str):
         print(f"  NPC: {label_it(g, npc)}")
     for row in eng.run_query("openable-portals.rq"):
         print(f"  Portale apribile: {label_it(g, row.portale)}")
@@ -132,7 +133,8 @@ def main() -> int:
         return 2
 
     world = load_runtime_world()
-    if not args.new and args.save.exists():
+    resumed = not args.new and args.save.exists()
+    if resumed:
         state = Graph()
         try:
             state.parse(args.save, format="turtle")
@@ -146,6 +148,11 @@ def main() -> int:
 
     seed = args.seed if args.seed is not None else cfg.seed
     eng = Engine(world, state, player_success=cfg.player_success, seed=seed)
+
+    if resumed and not run_validation_report(eng):
+        print("Salvataggio non conforme alle shape runtime; usa --new per ricominciare.",
+              file=sys.stderr)
+        return 3
 
     args.save.parent.mkdir(parents=True, exist_ok=True)
     eng.state.serialize(args.save, format="turtle")  # turno zero: stato subito ispezionabile

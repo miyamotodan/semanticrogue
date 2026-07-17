@@ -70,7 +70,7 @@ python -m pytest -v              # con dettaglio per test
 python -m pytest tests/test_validation.py::test_authored_dataset_conforms -v   # un solo test
 ```
 
-La suite (60 test) verifica che i file Turtle si carichino, che il dataset authored sia conforme alle shape, che ogni query restituisca risultati, che ognuno dei casi rotti in `tests/invalid/` venga intercettato dalla shape giusta, il motore (`tools/engine.py`), la validazione runtime su stati rotti ad arte, la CLI `tools.play` e run end-to-end vincenti/perdenti.
+La suite (61 test) verifica che i file Turtle si carichino, che il dataset authored sia conforme alle shape, che ogni query restituisca risultati, che ognuno dei casi rotti in `tests/invalid/` venga intercettato dalla shape giusta, il motore (`tools/engine.py`), la validazione runtime su stati rotti ad arte, la CLI `tools.play` (incluso il resume di un salvataggio non conforme, exit 3) e run end-to-end vincenti/perdenti.
 
 ### Giocare una run
 
@@ -101,7 +101,7 @@ Comandi di gioco (a runtime, uno per turno):
 
 Gli argomenti dei comandi accettano il nome locale (`ossuary02`) o la label italiana (`Ossario 02`), case-insensitive. La run termina da sola in vittoria (prima quest completata) o sconfitta (giocatore morto).
 
-Exit code: `0` fine run/uscita normale · `2` errore di configurazione o salvataggio illeggibile (suggerisce `--new`) · `3` violazione runtime dopo una transizione (bug del motore: il turno non viene salvato).
+Exit code: `0` fine run/uscita normale · `2` errore di configurazione o salvataggio illeggibile (suggerisce `--new`) · `3` stato runtime non conforme alle shape (al resume di un salvataggio non conforme, o dopo una transizione: bug del motore) — il turno/salvataggio non viene riscritto.
 
 Configurazione in `config.toml` (versionato, alla radice del repo): `[validation] mode` = `"turn"` (valida dopo ogni transizione, default) o `"on-demand"` (solo col comando `valida`); `[combat] player_success` = probabilità di vittoria del player in `[0, 1]` (default `1.0`); `seed` (top-level, opzionale) per run riproducibili.
 

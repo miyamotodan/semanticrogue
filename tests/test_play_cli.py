@@ -66,3 +66,21 @@ def test_corrupted_save_exits_2(tmp_path):
     result = run_cli([], ["esci"], save)
     assert result.returncode == 2
     assert "--new" in result.stderr
+
+
+def test_nonconformant_save_exits_3_and_is_not_rewritten(tmp_path):
+    save = tmp_path / "save.ttl"
+    save.write_text(
+        """@prefix sr: <http://example.org/semantic-roguelike#> .
+@prefix ex: <http://example.org/id/> .
+ex:player a sr:Player ; sr:currentRoom ex:crypt07 .
+ex:sealedGate sr:isOpen true .
+""",
+        encoding="utf-8",
+    )
+    before = save.read_text(encoding="utf-8")
+    result = run_cli([], ["esci"], save)
+    assert result.returncode == 3
+    assert "Conforms: False" in result.stdout
+    after = save.read_text(encoding="utf-8")
+    assert after == before
