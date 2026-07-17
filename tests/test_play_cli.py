@@ -143,8 +143,21 @@ def test_auto_map_regenerates_after_successful_action(tmp_path):
     assert "🧝 Ossario 02" in content  # il player è sull'Ossario dopo lo spostamento
 
 
-def test_auto_map_off_by_default_does_not_write_map(tmp_path):
+def test_auto_map_off_does_not_write_map(tmp_path):
+    cfg = tmp_path / "c.toml"
+    cfg.write_text("[map]\nauto = false\n", encoding="utf-8")
     save = tmp_path / "save.ttl"
-    result = run_cli(["--new"], ["vai ossario", "esci"], save)  # config di default: auto_map False
+    result = run_cli(["--new", "--config", str(cfg)], ["vai ossario", "esci"], save)
     assert result.returncode == 0, result.stderr
     assert not (tmp_path / "mappa.md").exists()
+
+
+def test_auto_map_writes_map_at_turn_zero(tmp_path):
+    cfg = tmp_path / "c.toml"
+    cfg.write_text("[map]\nauto = true\n", encoding="utf-8")
+    save = tmp_path / "save.ttl"
+    # Esce subito, senza muoversi: la mappa deve già esistere e riflettere lo stato iniziale.
+    result = run_cli(["--new", "--config", str(cfg)], ["esci"], save)
+    assert result.returncode == 0, result.stderr
+    content = (tmp_path / "mappa.md").read_text(encoding="utf-8")
+    assert "🧝 Ingresso delle Catacombe" in content  # player nella stanza iniziale

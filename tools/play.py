@@ -160,6 +160,8 @@ def main() -> int:
 
     args.save.parent.mkdir(parents=True, exist_ok=True)
     eng.state.serialize(args.save, format="turtle")  # turno zero: stato subito ispezionabile
+    if cfg.auto_map:
+        write_map(eng, args.save)  # mappa coerente con lo stato iniziale, prima della prima mossa
 
     while True:
         outcome = eng.outcome()
