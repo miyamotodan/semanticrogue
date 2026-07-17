@@ -5,10 +5,11 @@ nessuno stato duplicato in oggetti Python.
 """
 import random
 
+from pyshacl import validate
 from rdflib import Graph, Literal, Namespace, URIRef
 from rdflib.namespace import RDF
 
-from tools.common import ROOT
+from tools.common import ROOT, RUNTIME_SHAPES, load_graph
 
 SR = Namespace("http://example.org/semantic-roguelike#")
 EX = Namespace("http://example.org/id/")
@@ -118,3 +119,9 @@ class Engine:
         if next(self.state.subjects(SR.questStatus, Literal("completed")), None) is not None:
             return "victory"
         return None
+
+
+def validate_runtime(world: Graph, state: Graph):
+    """Valida lo stato di partita contro le shape runtime. Ritorna (conforms, results_graph, text)."""
+    shapes = load_graph(RUNTIME_SHAPES)
+    return validate(world + state, shacl_graph=shapes, advanced=True)

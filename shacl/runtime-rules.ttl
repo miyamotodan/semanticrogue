@@ -1,0 +1,92 @@
+@prefix sr:   <http://example.org/semantic-roguelike#> .
+@prefix sh:   <http://www.w3.org/ns/shacl#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl:  <http://www.w3.org/2002/07/owl#> .
+
+sr:RuntimeShapes a owl:Ontology ;
+  rdfs:label "Shape SHACL dello stato di partita"@it ;
+  rdfs:label "Game-state SHACL shapes"@en ;
+  rdfs:comment "Vincoli di coerenza sul runtime graph: il motore non può corrompere la partita senza che la validazione se ne accorga."@it ;
+  rdfs:comment "Consistency constraints on the runtime graph: the engine cannot corrupt the game without validation noticing."@en ;
+  sh:declare [
+    sh:prefix "sr" ;
+    sh:namespace "http://example.org/semantic-roguelike#"^^xsd:anyURI ;
+  ] .
+
+sr:PlayerStateShape a sh:NodeShape ;
+  sh:targetClass sr:Player ;
+  rdfs:label "Stato del giocatore"@it ;
+  rdfs:label "Player state"@en ;
+  rdfs:comment "Shape che impone che il giocatore si trovi in esattamente una stanza valida del mondo."@it ;
+  rdfs:comment "Shape enforcing that the player is located in exactly one valid room of the world."@en ;
+
+  sh:property [
+    sh:path sr:currentRoom ;
+    sh:minCount 1 ;
+    sh:maxCount 1 ;
+    sh:class sr:Room ;
+    sh:name "stanza corrente del giocatore"@it ;
+    sh:name "player's current room"@en ;
+    sh:description "Il giocatore deve avere una e una sola stanza corrente, e deve essere una stanza del mondo."@it ;
+    sh:description "The player must have one and only one current room, and it must be a room of the world."@en ;
+  ] .
+
+sr:QuestStatusValueShape a sh:NodeShape ;
+  sh:targetClass sr:Quest ;
+  rdfs:label "Valori ammessi dello stato quest"@it ;
+  rdfs:label "Allowed quest status values"@en ;
+  rdfs:comment "Shape che ammette per lo stato di una quest solo i valori \"active\" e \"completed\", al più uno per quest."@it ;
+  rdfs:comment "Shape allowing only the values \"active\" and \"completed\" for a quest's status, at most one per quest."@en ;
+
+  sh:property [
+    sh:path sr:questStatus ;
+    sh:maxCount 1 ;
+    sh:in ( "active" "completed" ) ;
+    sh:name "stato della quest"@it ;
+    sh:name "quest status"@en ;
+    sh:description "Lo stato di una quest, se presente, è uno solo tra \"active\" e \"completed\"."@it ;
+    sh:description "A quest's status, when present, is exactly one of \"active\" and \"completed\"."@en ;
+  ] .
+
+sr:OpenPortalNeedsKeyShape a sh:NodeShape ;
+  sh:targetClass sr:Portal ;
+  rdfs:label "Un portale aperto richiede la sua chiave"@it ;
+  rdfs:label "An open portal requires its key"@en ;
+  rdfs:comment "Shape SPARQL-based: un portale può risultare aperto solo se la chiave che richiede è nell'inventario del giocatore."@it ;
+  rdfs:comment "SPARQL-based shape: a portal can be open only if the key it requires is in the player's inventory."@en ;
+  sh:sparql [
+    sh:prefixes sr:RuntimeShapes ;
+    sh:message "Portale aperto senza che il giocatore possieda la chiave richiesta: transizione illecita."@it ;
+    sh:message "Portal open although the player does not hold the required key: illegal transition."@en ;
+    sh:select """
+      SELECT $this
+      WHERE {
+        $this sr:isOpen true ;
+              sr:requiresItem ?chiave .
+        FILTER NOT EXISTS { ?player a sr:Player ; sr:hasItem ?chiave . }
+      }
+    """ ;
+  ] .
+
+sr:ItemProvenanceShape a sh:NodeShape ;
+  sh:targetClass sr:Player ;
+  rdfs:label "Provenienza degli oggetti in inventario"@it ;
+  rdfs:label "Inventory item provenance"@en ;
+  rdfs:comment "Shape SPARQL-based: ogni oggetto in inventario deve avere una provenienza lecita — drop di un mostro sconfitto o ricompensa di una quest completata."@it ;
+  rdfs:comment "SPARQL-based shape: every inventory item must have a legitimate provenance — a defeated monster's drop or a completed quest's reward."@en ;
+  sh:sparql [
+    sh:prefixes sr:RuntimeShapes ;
+    sh:message "Oggetto in inventario senza provenienza lecita (nessun mostro sconfitto lo droppa, nessuna quest completata lo premia)."@it ;
+    sh:message "Inventory item with no legitimate provenance (no defeated monster drops it, no completed quest rewards it)."@en ;
+    sh:select """
+      SELECT $this ?value
+      WHERE {
+        $this sr:hasItem ?value .
+        # Nota: due NOT EXISTS separati invece di NOT EXISTS { A UNION B }:
+        # logicamente equivalenti, ma il secondo costrutto è valutato male da rdflib.
+        FILTER NOT EXISTS { ?m sr:dropsItem ?value . ?m sr:isAlive false . }
+        FILTER NOT EXISTS { ?q sr:questReward ?value ; sr:questStatus "completed" . }
+      }
+    """ ;
+  ] .
