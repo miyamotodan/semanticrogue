@@ -70,7 +70,7 @@ python -m pytest -v              # con dettaglio per test
 python -m pytest tests/test_validation.py::test_authored_dataset_conforms -v   # un solo test
 ```
 
-La suite (84 test) verifica che i file Turtle si carichino, che il dataset authored sia conforme alle shape, che ogni query restituisca risultati, che ognuno dei casi rotti in `tests/invalid/` venga intercettato dalla shape giusta (inclusi mondi con zero o due stanze iniziali), il motore (`tools/engine.py`), la validazione runtime su stati rotti ad arte, la CLI `tools.play` (incluso il resume di un salvataggio non conforme, exit 3), la mappa (`tools.map`, fog-of-war incluso) e run end-to-end vincenti/perdenti.
+La suite (85 test) verifica che i file Turtle si carichino, che il dataset authored sia conforme alle shape, che ogni query restituisca risultati, che ognuno dei casi rotti in `tests/invalid/` venga intercettato dalla shape giusta (inclusi mondi con zero o due stanze iniziali, o una quest che premia la chiave d'accesso alla propria stanza obiettivo), il motore (`tools/engine.py`), la validazione runtime su stati rotti ad arte, la CLI `tools.play` (incluso il resume di un salvataggio non conforme, exit 3), la mappa (`tools.map`, fog-of-war incluso) e run end-to-end vincenti/perdenti.
 
 ### Giocare una run
 
