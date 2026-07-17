@@ -364,3 +364,8 @@ ex:cullTheSpores a sr:Quest ;
 
 ex:entrance01 sr:connectedTo ex:chapel03 .
 ex:sanctum01 sr:connectedTo ex:boneBridge04 .
+
+### M3 — collocazione degli NPC (gap emerso progettando il simulatore)
+
+ex:graveHermit sr:npcInRoom ex:entrance01 .
+ex:ashPriest sr:npcInRoom ex:chapel03 .

@@ -1,0 +1,8 @@
+@prefix sr:   <http://example.org/semantic-roguelike#> .
+@prefix ex:   <http://example.org/id/> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+# NPC senza stanza: offre una quest ma non si trova da nessuna parte.
+ex:brokenNPC a sr:NPC ;
+  rdfs:label "NPC senza dimora"@it ;
+  rdfs:label "Homeless NPC"@en .

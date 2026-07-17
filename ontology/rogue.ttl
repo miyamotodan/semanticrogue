@@ -189,6 +189,14 @@ sr:questReward a owl:ObjectProperty ;
   rdfs:comment "Specifica l’oggetto dato come ricompensa per il completamento della quest."@it ;
   rdfs:comment "Specifies the item granted as a reward for completing the quest."@en .
 
+sr:npcInRoom a owl:ObjectProperty ;
+  rdfs:domain sr:NPC ;
+  rdfs:range sr:Room ;
+  rdfs:label "si trova nella stanza"@it ;
+  rdfs:label "located in room"@en ;
+  rdfs:comment "Indica la stanza in cui il personaggio non giocante si trova e in cui il giocatore può interagirci."@it ;
+  rdfs:comment "Indicates the room where the non-player character is located and where the player can interact with it."@en .
+
 ### Datatype properties
 
 sr:dangerLevel a owl:DatatypeProperty ;

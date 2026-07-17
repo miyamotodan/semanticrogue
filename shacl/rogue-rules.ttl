@@ -210,6 +210,24 @@ sr:NPCQuestShape a sh:NodeShape ;
     sh:description "If an NPC offers a quest, the value must be a resource typed as a quest."@en ;
   ] .
 
+sr:NPCPlacementShape a sh:NodeShape ;
+  sh:targetClass sr:NPC ;
+  rdfs:label "Collocazione degli NPC"@it ;
+  rdfs:label "NPC placement"@en ;
+  rdfs:comment "Shape che impone che ogni personaggio non giocante si trovi in esattamente una stanza, altrimenti è irraggiungibile dal giocatore."@it ;
+  rdfs:comment "Shape enforcing that every non-player character is located in exactly one room, otherwise the player cannot reach it."@en ;
+
+  sh:property [
+    sh:path sr:npcInRoom ;
+    sh:minCount 1 ;
+    sh:maxCount 1 ;
+    sh:class sr:Room ;
+    sh:name "stanza dell'NPC"@it ;
+    sh:name "NPC room"@en ;
+    sh:description "Ogni NPC deve trovarsi in una e una sola stanza valida del mondo."@it ;
+    sh:description "Each NPC must be located in one and only one valid room of the world."@en ;
+  ] .
+
 sr:BossPlacementShape a sh:NodeShape ;
   sh:targetClass sr:Boss ;
   rdfs:label "Ricompensa del boss"@it ;

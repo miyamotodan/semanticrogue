@@ -34,6 +34,7 @@ BROKEN_CASES = [
     ("monster-no-faction.ttl", EX.brokenMonster, ("path", SR.belongsToFaction)),
     ("boss-no-loot.ttl", EX.brokenBoss, ("path", SR.dropsItem)),
     ("portal-nowhere.ttl", EX.brokenPortal, ("path", SR.portalInRoom)),
+    ("npc-nowhere.ttl", EX.brokenNPC, ("path", SR.npcInRoom)),
     ("dangerous-room-empty.ttl", EX.brokenRoom, ("shape", SR.DangerousRoomMustHaveContent)),
     ("portal-unobtainable-key.ttl", EX.brokenPortal, ("shape", SR.RequiredKeyMustExistInWorld)),
     ("orphan-key.ttl", EX.orphanKey, ("shape", SR.OrphanKeyShape)),
