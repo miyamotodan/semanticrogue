@@ -44,5 +44,8 @@ a mano, secondo il principio di sviluppo incrementale del progetto.
 
 ## Backlog per M4 (dalla review finale M3)
 
-- Shape di contenuto di unicità per `sr:isStartRoom` (+ caso rotto): indispensabile prima della generazione procedurale.
-- `talk_to` dovrebbe chiamare `_check_quest_completion` (caso: quest accettata quando si è già nella target room ripulita).
+Chiuso: il backlog di rigore emerso dalla review finale di M3 è stato risolto
+(shape di unicità di `sr:isStartRoom` con casi rotto "zero" e "due";
+`talk_to` che chiama `_check_quest_completion`; guard sui tipi non-tabella in
+`config.py`). Spec e piano: `docs/superpowers/specs/2026-07-17-backlog-m4-vincoli-design.md`,
+`docs/superpowers/plans/2026-07-17-backlog-m4-vincoli.md`.
