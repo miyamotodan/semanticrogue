@@ -22,7 +22,7 @@ def load_config(path: Path = CONFIG_PATH) -> Config:
     raw = tomllib.loads(path.read_text(encoding="utf-8"))
     mode = raw.get("validation", {}).get("mode", "turn")
     success = raw.get("combat", {}).get("player_success", 1.0)
-    seed = raw.get("seed") or raw.get("combat", {}).get("seed")
+    seed = raw.get("seed")
 
     if mode not in ("turn", "on-demand"):
         raise ValueError(f"validation.mode sconosciuto: {mode!r} (ammessi: \"turn\", \"on-demand\")")

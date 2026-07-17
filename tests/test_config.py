@@ -17,10 +17,16 @@ def test_repo_config_is_valid():
 
 def test_config_reads_values(tmp_path):
     f = tmp_path / "c.toml"
-    f.write_text('[validation]\nmode = "on-demand"\n[combat]\nplayer_success = 0.5\nseed = 42\n',
+    f.write_text('seed = 42\n[validation]\nmode = "on-demand"\n[combat]\nplayer_success = 0.5\n',
                  encoding="utf-8")
     cfg = load_config(f)
     assert cfg == Config(validation_mode="on-demand", player_success=0.5, seed=42)
+
+
+def test_config_reads_seed_zero(tmp_path):
+    f = tmp_path / "c.toml"
+    f.write_text("seed = 0\n", encoding="utf-8")
+    assert load_config(f).seed == 0
 
 
 @pytest.mark.parametrize("body", [
