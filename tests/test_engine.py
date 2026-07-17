@@ -4,7 +4,7 @@ from rdflib import Literal, Namespace
 from rdflib.namespace import RDF
 
 from tools.common import load_runtime_world
-from tools.engine import EX, PLAYER, SR, Engine, new_state
+from tools.engine import EX, PLAYER, SR, Engine, ActionError, new_state
 
 WORLD = load_runtime_world()
 
@@ -48,3 +48,44 @@ def test_quest_status_reports_all_quests(eng):
     assert (EX.recoverRelic, None) in rows
     assert (EX.endTheCourt, None) in rows
     assert (EX.cullTheSpores, None) in rows
+
+
+def test_move_to_valid_room(eng):
+    eng.move_to(EX.ossuary02)
+    assert eng.current_room() == EX.ossuary02
+    # Il passaggio è bidirezionale: si può tornare indietro.
+    eng.move_to(EX.entrance01)
+    assert eng.current_room() == EX.entrance01
+
+
+def test_move_to_unreachable_room_is_rejected(eng):
+    with pytest.raises(ActionError):
+        eng.move_to(EX.sanctum01)
+    assert eng.current_room() == EX.entrance01  # nessuna modifica
+
+
+def test_open_portal_requires_key_and_presence(eng):
+    with pytest.raises(ActionError):
+        eng.open_portal(EX.sealedGate)  # non è nemmeno nella stanza
+    eng.state.set((PLAYER, SR.currentRoom, EX.crypt07))
+    with pytest.raises(ActionError):
+        eng.open_portal(EX.sealedGate)  # manca la chiave
+    eng.state.add((PLAYER, SR.hasItem, EX.ivoryKey))
+    eng.open_portal(EX.sealedGate)
+    assert (EX.sealedGate, SR.isOpen, Literal(True)) in eng.state
+    # Ora il portale aperto è una mossa: si può entrare nel santuario.
+    moves = {row.stanza for row in eng.run_query("available-moves.rq")}
+    assert EX.sanctum01 in moves
+    with pytest.raises(ActionError):
+        eng.open_portal(EX.sealedGate)  # già aperto
+
+
+def test_moving_into_cleared_target_room_completes_active_quest(eng):
+    # cullTheSpores attiva; il nido è già stato ripulito (mostri segnati sconfitti).
+    eng.state.add((EX.cullTheSpores, SR.questStatus, Literal("active")))
+    eng.state.add((EX.myceliumBrute, SR.isAlive, Literal(False)))
+    eng.state.add((EX.sporeMother, SR.isAlive, Literal(False)))
+    eng.state.set((PLAYER, SR.currentRoom, EX.fungalHollow01))
+    eng.move_to(EX.sporeNest02)
+    assert (EX.cullTheSpores, SR.questStatus, Literal("completed")) in eng.state
+    assert (PLAYER, SR.hasItem, EX.boneBlade) in eng.state

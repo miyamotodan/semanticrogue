@@ -54,3 +54,29 @@ class Engine:
         """Esegue una query di queries/runtime/ sul grafo unito."""
         text = (RUNTIME_QUERIES / name).read_text(encoding="utf-8")
         return list(self.graph().query(text))
+
+    def move_to(self, room: URIRef) -> None:
+        """Sposta il player in una stanza raggiungibile (passaggio o portale aperto)."""
+        moves = {row.stanza for row in self.run_query("available-moves.rq")}
+        if room not in moves:
+            raise ActionError(f"stanza non raggiungibile da qui: {room}")
+        self.state.set((PLAYER, SR.currentRoom, room))
+        self._check_quest_completion()
+
+    def open_portal(self, portal: URIRef) -> None:
+        """Apre un portale chiuso nella stanza corrente, se la chiave è in inventario."""
+        openable = {row.portale for row in self.run_query("openable-portals.rq")}
+        if portal not in openable:
+            raise ActionError(f"portale non apribile ora: {portal}")
+        self.state.add((portal, SR.isOpen, Literal(True)))
+
+    def _check_quest_completion(self) -> None:
+        """Le quest attive con target = stanza corrente e nessun mostro vivo si completano."""
+        if self.run_query("monsters-here.rq"):
+            return
+        room = self.current_room()
+        for quest in list(self.state.subjects(SR.questStatus, Literal("active"))):
+            if (quest, SR.questTargetRoom, room) in self.world:
+                self.state.set((quest, SR.questStatus, Literal("completed")))
+                for reward in self.world.objects(quest, SR.questReward):
+                    self.state.add((PLAYER, SR.hasItem, reward))
