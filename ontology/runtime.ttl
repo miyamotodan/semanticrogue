@@ -1,0 +1,55 @@
+@prefix sr:   <http://example.org/semantic-roguelike#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl:  <http://www.w3.org/2002/07/owl#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+sr:RuntimeOntology a owl:Ontology ;
+  rdfs:label "Ontologia runtime del Roguelike Semantico"@it ;
+  rdfs:label "Semantic Roguelike runtime ontology"@en ;
+  rdfs:comment "Vocabolario minimo per lo stato di partita: giocatore, posizione, inventario, vita, aperture e stato delle quest. Convenzione: assenza di tripla = stato di default (mostro vivo, portale chiuso, quest non accettata)."@it ;
+  rdfs:comment "Minimal vocabulary for the game state: player, position, inventory, life, openings, and quest status. Convention: absence of a triple = default state (monster alive, portal closed, quest not accepted)."@en .
+
+sr:Player a owl:Class ;
+  rdfs:label "Giocatore"@it ;
+  rdfs:label "Player"@en ;
+  rdfs:comment "Entità controllata da chi gioca: ha una posizione corrente e un inventario nel grafo runtime."@it ;
+  rdfs:comment "Entity controlled by the person playing: it has a current position and an inventory in the runtime graph."@en .
+
+sr:currentRoom a owl:ObjectProperty ;
+  rdfs:domain sr:Player ;
+  rdfs:range sr:Room ;
+  rdfs:label "stanza corrente"@it ;
+  rdfs:label "current room"@en ;
+  rdfs:comment "Posizione corrente del giocatore: esattamente una stanza per tutta la durata della run."@it ;
+  rdfs:comment "Current position of the player: exactly one room for the whole duration of the run."@en .
+
+sr:hasItem a owl:ObjectProperty ;
+  rdfs:domain sr:Player ;
+  rdfs:range sr:Item ;
+  rdfs:label "possiede oggetto"@it ;
+  rdfs:label "has item"@en ;
+  rdfs:comment "Oggetto presente nell'inventario del giocatore, ottenuto come drop di un mostro sconfitto o ricompensa di una quest completata."@it ;
+  rdfs:comment "Item in the player's inventory, obtained as a defeated monster's drop or a completed quest's reward."@en .
+
+sr:isAlive a owl:DatatypeProperty ;
+  rdfs:range xsd:boolean ;
+  rdfs:label "è vivo"@it ;
+  rdfs:label "is alive"@en ;
+  rdfs:comment "Stato vitale di un mostro o del giocatore; si scrive solo alla morte (false), l'assenza della tripla significa vivo. Nessun dominio rigido: vale per mostri e giocatore."@it ;
+  rdfs:comment "Life state of a monster or the player; written only on death (false), absence of the triple means alive. No strict domain: applies to monsters and the player."@en .
+
+sr:isOpen a owl:DatatypeProperty ;
+  rdfs:domain sr:Portal ;
+  rdfs:range xsd:boolean ;
+  rdfs:label "è aperto"@it ;
+  rdfs:label "is open"@en ;
+  rdfs:comment "Stato di apertura di un portale; si scrive solo all'apertura (true), l'assenza della tripla significa chiuso."@it ;
+  rdfs:comment "Open state of a portal; written only when opened (true), absence of the triple means closed."@en .
+
+sr:questStatus a owl:DatatypeProperty ;
+  rdfs:domain sr:Quest ;
+  rdfs:range xsd:string ;
+  rdfs:label "stato della quest"@it ;
+  rdfs:label "quest status"@en ;
+  rdfs:comment "Stato di avanzamento della quest nella run corrente: \"active\" o \"completed\"; l'assenza della tripla significa non ancora accettata."@it ;
+  rdfs:comment "Progress state of the quest in the current run: \"active\" or \"completed\"; absence of the triple means not yet accepted."@en .

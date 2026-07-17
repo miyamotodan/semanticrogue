@@ -7,6 +7,9 @@ ROOT = Path(__file__).resolve().parent.parent
 ONTOLOGY = ROOT / "ontology" / "rogue.ttl"
 DATASET = ROOT / "dataset" / "dataset.ttl"
 SHAPES = ROOT / "shacl" / "rogue-rules.ttl"
+RUNTIME_ONTOLOGY = ROOT / "ontology" / "runtime.ttl"
+RUNTIME_SHAPES = ROOT / "shacl" / "runtime-rules.ttl"
+SAVE_PATH = ROOT / "runtime" / "save.ttl"
 
 
 def load_graph(*paths: Path) -> Graph:
@@ -20,3 +23,8 @@ def load_graph(*paths: Path) -> Graph:
 def load_world(data_path: Path = DATASET) -> Graph:
     """Grafo unito ontologia + dataset: la base per query e validazione."""
     return load_graph(ONTOLOGY, data_path)
+
+
+def load_runtime_world(data_path: Path = DATASET) -> Graph:
+    """Grafo di lavoro del simulatore: ontologia statica + ontologia runtime + dataset."""
+    return load_graph(ONTOLOGY, RUNTIME_ONTOLOGY, data_path)

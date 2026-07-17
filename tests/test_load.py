@@ -21,3 +21,15 @@ def test_load_world_merges_ontology_and_dataset():
 def test_load_graph_accepts_multiple_paths():
     g = load_graph(ONTOLOGY, DATASET)
     assert len(g) > 0
+
+
+def test_runtime_world_includes_runtime_vocabulary():
+    """load_runtime_world unisce anche il vocabolario runtime (sr:Player ecc.)."""
+    from rdflib import Namespace
+    from rdflib.namespace import RDF, OWL
+    from tools.common import load_runtime_world
+
+    SR = Namespace("http://example.org/semantic-roguelike#")
+    world = load_runtime_world()
+    assert (SR.Player, RDF.type, OWL.Class) in world
+    assert (SR.currentRoom, RDF.type, OWL.ObjectProperty) in world
