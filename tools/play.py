@@ -11,23 +11,11 @@ import sys
 from pathlib import Path
 
 from rdflib import Graph, URIRef
-from rdflib.namespace import RDFS
 
-from tools.common import SAVE_PATH, load_runtime_world
+from tools.common import SAVE_PATH, label_it, load_runtime_world, local_name
 from tools.config import CONFIG_PATH, load_config
 from tools.engine import (PLAYER, SR, ActionError, Engine, new_state,
                           validate_runtime)
-
-
-def local_name(node: URIRef) -> str:
-    return str(node).rsplit("#", 1)[-1].rsplit("/", 1)[-1]
-
-
-def label_it(graph: Graph, node: URIRef) -> str:
-    for lbl in graph.objects(node, RDFS.label):
-        if getattr(lbl, "language", None) == "it":
-            return str(lbl)
-    return local_name(node)
 
 
 def pick(graph: Graph, candidates, text: str) -> URIRef | None:
