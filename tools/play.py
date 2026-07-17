@@ -19,13 +19,27 @@ from tools.engine import (PLAYER, SR, ActionError, Engine, new_state,
 from tools.map import build_map, to_markdown
 
 
-def pick(graph: Graph, candidates, text: str) -> URIRef | None:
-    """Trova il candidato con nome locale o label italiana uguale a text (case-insensitive)."""
+def pick(graph: Graph, candidates, text: str, tipo: str) -> URIRef:
+    """Individua un candidato dal testo digitato, per nome locale o label italiana.
+
+    Il match esatto ha priorità; in sua assenza si accetta il prefisso, purché
+    identifichi un solo candidato. Alza ActionError se nessuno corrisponde
+    (`nessun <tipo>`) o se il prefisso è ambiguo (`<tipo> ambiguo`, con l'elenco).
+    """
     text = text.strip().lower()
-    for c in candidates:
-        if text in (local_name(c).lower(), label_it(graph, c).lower()):
-            return c
-    return None
+    names = {c: (local_name(c).lower(), label_it(graph, c).lower()) for c in candidates}
+
+    exact = [c for c, forms in names.items() if text in forms]
+    if exact:
+        return exact[0]
+
+    prefix = [c for c, forms in names.items() if any(f.startswith(text) for f in forms)]
+    if len(prefix) == 1:
+        return prefix[0]
+    if len(prefix) > 1:
+        opzioni = ", ".join(sorted(label_it(graph, c) for c in prefix))
+        raise ActionError(f"'{text}' è ambiguo per {tipo}: corrisponde a {opzioni}")
+    raise ActionError(f"nessun {tipo} corrisponde a '{text}'")
 
 
 def show_turn(eng: Engine) -> None:
@@ -67,23 +81,15 @@ def do_command(eng: Engine, line: str, save_path: Path) -> bool:
 
     if verb == "vai":
         rooms = {row.stanza for row in eng.run_query("available-moves.rq")}
-        room = pick(g, rooms, arg)
-        if room is None:
-            raise ActionError(f"nessuna uscita chiamata '{arg}'")
-        eng.move_to(room)
+        eng.move_to(pick(g, rooms, arg, "uscita"))
         return True
     if verb == "apri":
         portals = {row.portale for row in eng.run_query("openable-portals.rq")}
-        portal = pick(g, portals, arg)
-        if portal is None:
-            raise ActionError(f"nessun portale apribile chiamato '{arg}'")
-        eng.open_portal(portal)
+        eng.open_portal(pick(g, portals, arg, "portale apribile"))
         return True
     if verb == "combatti":
         monsters = [row.mostro for row in eng.run_query("monsters-here.rq")]
-        target = pick(g, monsters, arg) if arg else None
-        if arg and target is None:
-            raise ActionError(f"nessun mostro chiamato '{arg}' qui")
+        target = pick(g, monsters, arg, "mostro") if arg else None
         if eng.fight(target):
             print("Hai vinto lo scontro.")
         else:
@@ -91,10 +97,7 @@ def do_command(eng: Engine, line: str, save_path: Path) -> bool:
         return True
     if verb == "parla":
         npcs = {row.npc for row in eng.run_query("npcs-here.rq")}
-        npc = pick(g, npcs, arg)
-        if npc is None:
-            raise ActionError(f"nessun NPC chiamato '{arg}' con cui parlare")
-        for quest in eng.talk_to(npc):
+        for quest in eng.talk_to(pick(g, npcs, arg, "NPC")):
             print(f"Quest attivata: {label_it(g, quest)}")
         return True
     if verb == "valida":

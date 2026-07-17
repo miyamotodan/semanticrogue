@@ -44,6 +44,43 @@ def test_invalid_action_does_not_crash(tmp_path):
     assert "non" in result.stdout.lower()  # messaggio di azione rifiutata
 
 
+def test_prefix_match_when_unambiguous(tmp_path):
+    save = tmp_path / "save.ttl"
+    # Dall'ingresso le uscite sono "Ossario 02" e "Cappella Profanata":
+    # "vai oss" basta perché nessun'altra uscita inizia per "oss".
+    result = run_cli(["--new"], ["vai oss", "esci"], save)
+    assert result.returncode == 0, result.stderr
+    assert "Ossario 02" in result.stdout
+
+
+def test_prefix_match_is_rejected_when_ambiguous(tmp_path):
+    save = tmp_path / "save.ttl"
+    # Nella Sala 08 le uscite sono Cappella Profanata, Cripta 07 e Cavità Fungina:
+    # "vai c" è ambiguo e deve essere rifiutato senza muovere il player.
+    result = run_cli(["--new"], [
+        "vai ossario", "vai cripta", "vai sala",  # ingresso -> ossuary02 -> crypt07 -> hall08
+        "vai c",                                   # ambiguo: nessuna transizione
+        "esci",
+    ], save)
+    assert result.returncode == 0, result.stderr
+    assert "ambigu" in result.stdout.lower()
+    # È rimasto nella Sala 08 dopo il comando ambiguo (nessuna transizione).
+    assert result.stdout.rstrip().count("Sala 08") >= 2
+
+
+def test_exact_match_wins_over_being_a_prefix_of_another(tmp_path):
+    save = tmp_path / "save.ttl"
+    # "vai cripta 07" indica esattamente la Cripta 07: il match esatto ha priorità
+    # e non è ambiguo, anche se fosse prefisso di un'altra uscita.
+    result = run_cli(["--new"], [
+        "vai ossario", "vai cripta", "vai sala",  # -> hall08
+        "vai cripta 07",                           # match esatto sulla label
+        "esci",
+    ], save)
+    assert result.returncode == 0, result.stderr
+    assert "ambigu" not in result.stdout.lower()
+
+
 def test_victory_run_with_labels(tmp_path):
     save = tmp_path / "save.ttl"
     result = run_cli(["--new", "--seed", "7"], [

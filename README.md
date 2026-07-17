@@ -100,7 +100,7 @@ Comandi di gioco (a runtime, uno per turno):
 | `mappa` | scrive/aggiorna la mappa Mermaid della partita in `mappa.md` accanto al salvataggio |
 | `esci` | esce; la run resta salvata sul file corrente |
 
-Gli argomenti dei comandi accettano il nome locale (`ossuary02`) o la label italiana (`Ossario 02`), case-insensitive. La run termina da sola in vittoria (prima quest completata) o sconfitta (giocatore morto).
+Gli argomenti dei comandi accettano il nome locale (`ossuary02`) o la label italiana (`Ossario 02`), case-insensitive. Basta anche un prefisso, purché identifichi un solo bersaglio: dalla Sala 08 `vai cri` va alla Cripta 07, ma `vai c` è ambiguo (Cappella, Cavità, Cripta) e viene rifiutato con l'elenco delle alternative. Un match esatto ha comunque la precedenza sul prefisso. La run termina da sola in vittoria (prima quest completata) o sconfitta (giocatore morto).
 
 Exit code: `0` fine run/uscita normale · `2` errore di configurazione o salvataggio illeggibile (suggerisce `--new`) · `3` stato runtime non conforme alle shape (al resume di un salvataggio non conforme, o dopo una transizione: bug del motore) — il turno/salvataggio non viene riscritto.
 
