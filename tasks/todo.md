@@ -1,22 +1,42 @@
-# Todo — M1 (World Core) + M2 (Semantic QA)
+# Todo — M3 (Playable Simulation)
 
-Piano dettagliato: `docs/superpowers/plans/2026-07-16-m1-m2-tooling.md`
-Spec: `docs/superpowers/specs/2026-07-16-m1-m2-tooling-design.md`
+Piano dettagliato: `docs/superpowers/plans/2026-07-17-m3-playable-simulation.md`
+Spec: `docs/superpowers/specs/2026-07-17-m3-playable-simulation-design.md`
 
-- [x] Task 1: ambiente Python, caricamento grafi e smoke test
-- [x] Task 2: validazione pySHACL eseguibile + prefissi SPARQL + boss del santuario
-- [x] Task 3: query SPARQL di lettura con CLI e test (chiude query M1)
-- [x] Task 4: mondo espanso al target Fase 1 (con esercizio a mano dell'autore)
-- [x] Task 5: shape di progressione + 10 casi volutamente rotti (chiude M2)
-- [x] Task 6: comandi in CLAUDE.md + retrospettiva
+- [x] Task 1: gap ontologico `sr:npcInRoom`, NPC collocati e shape di collocazione
+- [x] Task 2: vocabolario runtime (`ontology/runtime.ttl`) e `load_runtime_world`
+- [x] Task 3: `config.toml` + `tools/config.py` (modalità validazione, probabilità combattimento, seed)
+- [x] Task 4: query runtime (`queries/runtime/`) e scheletro `Engine` (stato iniziale e letture)
+- [x] Task 5: transizioni `move_to` e `open_portal` con completamento quest
+- [x] Task 6: transizioni `fight` (probabilistico) e `talk_to`, esito della run
+- [x] Task 7: shape SHACL runtime (`shacl/runtime-rules.ttl`) + `validate_runtime` con stati rotti ad arte
+- [x] Task 8: CLI `tools/play.py` a turni con autosave, resume e validazione configurabile
+- [x] Task 9: run end-to-end vincente e perdente, save rivalidabile a freddo
+- [x] Task 10: nota di studio sul runtime graph e documentazione comandi
 
-## Review (2026-07-16)
+## Review (2026-07-17)
 
-M1 e M2 completate: 21 test verdi, mondo a 10 stanze conforme, 10 casi rotti
-intercettati ciascuno dalla propria shape. Dettagli e lezioni in
-`docs/notes/06-retrospettiva-m1-m2.md`. Scoperte lungo la strada: violazione
-reale su sanctum01, due gap ontologici (portalInRoom, isStartRoom), bug rdflib
-su NOT EXISTS{A UNION B} (vedi CLAUDE.md → Comandi → Attenzione).
+M3 completata: il grafo RDF è ora anche world state. Costruito un runtime graph
+separato dal content graph (`ontology/runtime.ttl`, convenzione "assenza di
+tripla = stato di default"), un motore a transizioni pure su triple
+(`tools/engine.py`: `move_to`, `open_portal`, `fight`, `talk_to`,
+`_check_quest_completion`, `outcome`), query di lettura in `queries/runtime/`,
+shape SHACL sullo stato di partita (`shacl/runtime-rules.ttl`, incluso il
+pattern dei due `FILTER NOT EXISTS` separati già imparato in M2) e una CLI
+a turni con autosave, resume e validazione configurabile (`tools/play.py`,
+`config.toml`). Vittoria = prima quest completata; sconfitta = player morto;
+exit code 3 dedicato alle violazioni runtime dopo una transizione (bug del
+motore, distinto dalle violazioni di contenuto di `tools.validate`).
 
-Prossimo passo naturale: pianificare M3 (simulatore minimale di run) partendo
-dalla sezione "Cosa serve per M3" della retrospettiva.
+Suite a 60 test verdi (59 dal piano + un test di regressione in più dal
+Task 3, sul seed letto solo a livello top). Dettagli architetturali, il ciclo
+read→transizione→validazione→serializzazione e cosa la simulazione scioglie
+dei limiti dichiarati in M2 (cicli lock-key indiretti, completabilità reale
+delle quest) sono in `docs/notes/07-runtime-graph.md`.
+
+Verifica finale: `.venv/Scripts/python -m pytest` → 60 passed;
+`.venv/Scripts/python -m tools.validate` → exit 0, dataset conforme.
+
+Prossimo passo naturale: valutare la Fase successiva di `obiettivo.md`
+(generazione procedurale) solo dopo aver consolidato M3 con più run giocate
+a mano, secondo il principio di sviluppo incrementale del progetto.

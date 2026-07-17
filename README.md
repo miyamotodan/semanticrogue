@@ -70,17 +70,56 @@ python -m pytest -v              # con dettaglio per test
 python -m pytest tests/test_validation.py::test_authored_dataset_conforms -v   # un solo test
 ```
 
-La suite verifica che i tre file Turtle si carichino, che il dataset authored sia conforme alle shape, che ogni query restituisca risultati e che ognuno dei casi rotti in `tests/invalid/` venga intercettato dalla shape giusta.
+La suite (60 test) verifica che i file Turtle si carichino, che il dataset authored sia conforme alle shape, che ogni query restituisca risultati, che ognuno dei casi rotti in `tests/invalid/` venga intercettato dalla shape giusta, il motore (`tools/engine.py`), la validazione runtime su stati rotti ad arte, la CLI `tools.play` e run end-to-end vincenti/perdenti.
+
+### Giocare una run
+
+```bash
+python -m tools.play --new
+```
+
+Simulatore CLI a turni: il grafo RDF è il world state. Senza `--new` riprende il salvataggio esistente (default `runtime/save.ttl`) se presente, altrimenti inizia comunque una run nuova.
+
+| Opzione | Effetto |
+|---|---|
+| `--new` | inizia una run nuova (ignora un eventuale salvataggio) |
+| `--seed N` | seme RNG per combattimenti riproducibili (sovrascrive `seed` di `config.toml`) |
+| `--save FILE.ttl` | file di salvataggio (default `runtime/save.ttl`) |
+| `--config FILE.toml` | file di configurazione (default `config.toml`) |
+
+Comandi di gioco (a runtime, uno per turno):
+
+| Comando | Effetto |
+|---|---|
+| `vai <stanza>` | si muove verso una stanza raggiungibile (passaggio o portale aperto) |
+| `apri <portale>` | apre un portale nella stanza corrente, se la chiave richiesta è in inventario |
+| `combatti [mostro]` | affronta un mostro nella stanza corrente (il nome è opzionale se ce n'è uno solo) |
+| `parla <npc>` | parla con un NPC nella stanza corrente, attiva le quest che offre |
+| `valida` | esegue subito la validazione SHACL runtime e mostra il report |
+| `stato` | mostra posizione, inventario e stato di tutte le quest |
+| `esci` | esce; la run resta salvata sul file corrente |
+
+Gli argomenti dei comandi accettano il nome locale (`ossuary02`) o la label italiana (`Ossario 02`), case-insensitive. La run termina da sola in vittoria (prima quest completata) o sconfitta (giocatore morto).
+
+Exit code: `0` fine run/uscita normale · `2` errore di configurazione o salvataggio illeggibile (suggerisce `--new`) · `3` violazione runtime dopo una transizione (bug del motore: il turno non viene salvato).
+
+Configurazione in `config.toml` (versionato, alla radice del repo): `[validation] mode` = `"turn"` (valida dopo ogni transizione, default) o `"on-demand"` (solo col comando `valida`); `[combat] player_success` = probabilità di vittoria del player in `[0, 1]` (default `1.0`); `seed` (top-level, opzionale) per run riproducibili.
+
+Le query in `queries/runtime/` (`available-moves.rq`, `openable-portals.rq`, `monsters-here.rq`, `npcs-here.rq`, `quest-status.rq`) sono usate dal motore (`tools/engine.py`) e richiedono il runtime graph di una partita in corso: non sono raccolte da `tools.query --all` né documentate nella tabella query sopra.
 
 ## Struttura del progetto
 
 ```
-ontology/rogue.ttl      # Model: classi e proprietà (OWL)
+ontology/rogue.ttl      # Model: classi e proprietà (OWL) del contenuto
+ontology/runtime.ttl    # Model: vocabolario dello stato di partita (Player, currentRoom, ...)
 dataset/dataset.ttl     # Content: il mondo authored
-shacl/rogue-rules.ttl   # Validation: le shape SHACL
+shacl/rogue-rules.ttl   # Validation: le shape SHACL del contenuto
+shacl/runtime-rules.ttl # Validation: le shape SHACL dello stato di partita
 queries/*.rq            # le query SPARQL elencate sopra
-tools/                  # le CLI (validate, query)
+queries/runtime/*.rq    # query usate dal motore (tools/engine.py), non da tools.query
+tools/                  # le CLI (validate, query, play) e il motore (engine.py, config.py)
 tests/                  # pytest + casi volutamente rotti (tests/invalid/)
 docs/notes/             # note di studio, una per fase di sviluppo
 obiettivo.md            # visione e roadmap del progetto
+config.toml             # configurazione del simulatore (tools.play)
 ```
