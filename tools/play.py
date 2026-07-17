@@ -66,6 +66,15 @@ def show_status(eng: Engine) -> None:
         print(f"Quest: {label_it(g, row.quest)} [{status}] -> {label_it(g, row.target)}")
 
 
+def write_map(eng: Engine, save_path: Path) -> Path:
+    """Scrive la mappa della partita in mappa.md accanto al salvataggio e ne ritorna il percorso."""
+    target = save_path.parent / "mappa.md"
+    target.parent.mkdir(parents=True, exist_ok=True)
+    target.write_text(to_markdown(build_map(eng.world, eng.state), "Mappa della partita"),
+                      encoding="utf-8")
+    return target
+
+
 def run_validation_report(eng: Engine) -> bool:
     conforms, _, text = validate_runtime(eng.world, eng.state)
     if not conforms:
@@ -107,11 +116,7 @@ def do_command(eng: Engine, line: str, save_path: Path) -> bool:
         show_status(eng)
         return False
     if verb == "mappa":
-        target = save_path.parent / "mappa.md"
-        target.parent.mkdir(parents=True, exist_ok=True)
-        target.write_text(to_markdown(build_map(eng.world, eng.state), "Mappa della partita"),
-                          encoding="utf-8")
-        print(f"Mappa scritta in {target}")
+        print(f"Mappa scritta in {write_map(eng, save_path)}")
         return False
     raise ActionError(f"comando sconosciuto: '{verb}' "
                       "(comandi: vai, apri, combatti, parla, valida, stato, mappa, esci)")
@@ -188,6 +193,8 @@ def main() -> int:
                       "turno NON salvato.", file=sys.stderr)
                 return 3
             eng.state.serialize(args.save, format="turtle")
+            if cfg.auto_map:
+                write_map(eng, args.save)
 
 
 if __name__ == "__main__":

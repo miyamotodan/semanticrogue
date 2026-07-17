@@ -104,7 +104,7 @@ Gli argomenti dei comandi accettano il nome locale (`ossuary02`) o la label ital
 
 Exit code: `0` fine run/uscita normale · `2` errore di configurazione o salvataggio illeggibile (suggerisce `--new`) · `3` stato runtime non conforme alle shape (al resume di un salvataggio non conforme, o dopo una transizione: bug del motore) — il turno/salvataggio non viene riscritto.
 
-Configurazione in `config.toml` (versionato, alla radice del repo): `[validation] mode` = `"turn"` (valida dopo ogni transizione, default) o `"on-demand"` (solo col comando `valida`); `[combat] player_success` = probabilità di vittoria del player in `[0, 1]` (default `1.0`); `seed` (top-level, opzionale) per run riproducibili.
+Configurazione in `config.toml` (versionato, alla radice del repo): `[validation] mode` = `"turn"` (valida dopo ogni transizione, default) o `"on-demand"` (solo col comando `valida`); `[combat] player_success` = probabilità di vittoria del player in `[0, 1]` (default `1.0`); `[map] auto` = se `true`, riscrive `mappa.md` accanto al salvataggio dopo ogni azione riuscita (default `false`); `seed` (top-level, opzionale) per run riproducibili.
 
 Le query in `queries/runtime/` (`available-moves.rq`, `openable-portals.rq`, `monsters-here.rq`, `npcs-here.rq`, `quest-status.rq`) sono usate dal motore (`tools/engine.py`) e richiedono il runtime graph di una partita in corso: non sono raccolte da `tools.query --all` né documentate nella tabella query sopra.
 

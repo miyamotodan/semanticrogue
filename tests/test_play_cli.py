@@ -130,3 +130,21 @@ def test_mappa_command_writes_map_next_to_save(tmp_path):
     content = (tmp_path / "mappa.md").read_text(encoding="utf-8")
     assert "```mermaid" in content
     assert "🧝" in content  # la stanza del player è marcata
+
+
+def test_auto_map_regenerates_after_successful_action(tmp_path):
+    cfg = tmp_path / "c.toml"
+    cfg.write_text("[map]\nauto = true\n", encoding="utf-8")
+    save = tmp_path / "save.ttl"
+    result = run_cli(["--new", "--config", str(cfg)], ["vai ossario", "esci"], save)
+    assert result.returncode == 0, result.stderr
+    content = (tmp_path / "mappa.md").read_text(encoding="utf-8")  # creata senza comando `mappa`
+    assert "```mermaid" in content
+    assert "🧝 Ossario 02" in content  # il player è sull'Ossario dopo lo spostamento
+
+
+def test_auto_map_off_by_default_does_not_write_map(tmp_path):
+    save = tmp_path / "save.ttl"
+    result = run_cli(["--new"], ["vai ossario", "esci"], save)  # config di default: auto_map False
+    assert result.returncode == 0, result.stderr
+    assert not (tmp_path / "mappa.md").exists()

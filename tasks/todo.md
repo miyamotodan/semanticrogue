@@ -46,4 +46,3 @@ a mano, secondo il principio di sviluppo incrementale del progetto.
 
 - Shape di contenuto di unicità per `sr:isStartRoom` (+ caso rotto): indispensabile prima della generazione procedurale.
 - `talk_to` dovrebbe chiamare `_check_quest_completion` (caso: quest accettata quando si è già nella target room ripulita).
-- `tools/config.py`: guard sui tipi non-tabella (`validation = 5` oggi produce AttributeError/exit 1 invece di exit 2).
