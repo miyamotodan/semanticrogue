@@ -32,6 +32,23 @@ sr:PlayerStateShape a sh:NodeShape ;
     sh:description "The player must have one and only one current room, and it must be a room of the world."@en ;
   ] .
 
+sr:VisitedFlagShape a sh:NodeShape ;
+  sh:targetClass sr:Room ;
+  rdfs:label "Flag di stanza visitata"@it ;
+  rdfs:label "Visited-room flag"@en ;
+  rdfs:comment "Shape che impone che il flag di visita di una stanza, se presente, sia un singolo valore booleano."@it ;
+  rdfs:comment "Shape enforcing that a room's visited flag, when present, is a single boolean value."@en ;
+
+  sh:property [
+    sh:path sr:visited ;
+    sh:maxCount 1 ;
+    sh:datatype xsd:boolean ;
+    sh:name "flag di visita"@it ;
+    sh:name "visited flag"@en ;
+    sh:description "Il flag di visita di una stanza, se presente, è un unico booleano."@it ;
+    sh:description "A room's visited flag, when present, is a single boolean."@en ;
+  ] .
+
 sr:QuestStatusValueShape a sh:NodeShape ;
   sh:targetClass sr:Quest ;
   rdfs:label "Valori ammessi dello stato quest"@it ;

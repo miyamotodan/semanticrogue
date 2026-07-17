@@ -38,8 +38,15 @@ def broken_item_from_living_monster():
     return state, PLAYER, ("shape", SR.ItemProvenanceShape)
 
 
+def broken_visited_not_boolean():
+    state = new_state(WORLD)
+    state.add((EX.crypt07, SR.visited, Literal("si")))  # deve essere boolean
+    return state, EX.crypt07, ("path", SR.visited)
+
+
 BROKEN_STATES = [broken_two_rooms, broken_quest_status_value,
-                 broken_open_portal_without_key, broken_item_from_living_monster]
+                 broken_open_portal_without_key, broken_item_from_living_monster,
+                 broken_visited_not_boolean]
 
 
 @pytest.mark.parametrize("builder", BROKEN_STATES, ids=lambda b: b.__name__)
