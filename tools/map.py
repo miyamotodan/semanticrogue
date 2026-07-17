@@ -81,3 +81,43 @@ def build_map(world: Graph, state: Graph | None = None) -> str:
 def to_markdown(mermaid: str, title: str = "Mappa del dungeon") -> str:
     """Documento markdown completo con il blocco mermaid."""
     return f"# {title}\n\n```mermaid\n{mermaid}\n```\n"
+
+
+def main() -> int:
+    sys.stdout.reconfigure(encoding="utf-8")  # emoji su pipe Windows (cp1252)
+    parser = argparse.ArgumentParser(description="Esporta la mappa del dungeon in Mermaid.")
+    parser.add_argument("--data", type=Path, default=DATASET, help="dataset alternativo")
+    parser.add_argument("--save", type=Path,
+                        help="salvataggio da sovrapporre (default: runtime/save.ttl se esiste)")
+    parser.add_argument("-o", "--output", type=Path,
+                        help="scrive un file markdown invece di stampare su stdout")
+    args = parser.parse_args()
+
+    try:
+        world = load_runtime_world(args.data)
+    except Exception as e:
+        print(f"Errore di parsing del mondo: {e}", file=sys.stderr)
+        return 2
+
+    save = args.save if args.save is not None else (SAVE_PATH if SAVE_PATH.exists() else None)
+    state = None
+    if save is not None:
+        state = Graph()
+        try:
+            state.parse(save, format="turtle")
+        except Exception as e:
+            print(f"Errore di parsing del salvataggio {save}: {e}", file=sys.stderr)
+            return 2
+
+    text = build_map(world, state)
+    if args.output:
+        args.output.parent.mkdir(parents=True, exist_ok=True)
+        args.output.write_text(to_markdown(text), encoding="utf-8")
+        print(f"Mappa scritta in {args.output}")
+    else:
+        print(f"```mermaid\n{text}\n```")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
