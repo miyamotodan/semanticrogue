@@ -46,6 +46,14 @@ sr:isOpen a owl:DatatypeProperty ;
   rdfs:comment "Stato di apertura di un portale; si scrive solo all'apertura (true), l'assenza della tripla significa chiuso."@it ;
   rdfs:comment "Open state of a portal; written only when opened (true), absence of the triple means closed."@en .
 
+sr:visited a owl:DatatypeProperty ;
+  rdfs:domain sr:Room ;
+  rdfs:range xsd:boolean ;
+  rdfs:label "è stata visitata"@it ;
+  rdfs:label "has been visited"@en ;
+  rdfs:comment "Vero per una stanza in cui il giocatore è già entrato nella run corrente; si scrive solo alla prima visita, l'assenza della tripla significa non ancora visitata."@it ;
+  rdfs:comment "True for a room the player has already entered in the current run; written only on the first visit, absence of the triple means not yet visited."@en .
+
 sr:questStatus a owl:DatatypeProperty ;
   rdfs:domain sr:Quest ;
   rdfs:range xsd:string ;

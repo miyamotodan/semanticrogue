@@ -31,6 +31,7 @@ def new_state(world: Graph) -> Graph:
     g.bind("ex", EX)
     g.add((PLAYER, RDF.type, SR.Player))
     g.add((PLAYER, SR.currentRoom, start))
+    g.add((start, SR.visited, Literal(True)))
     return g
 
 
@@ -62,6 +63,7 @@ class Engine:
         if room not in moves:
             raise ActionError(f"stanza non raggiungibile da qui: {room}")
         self.state.set((PLAYER, SR.currentRoom, room))
+        self.state.add((room, SR.visited, Literal(True)))
         self._check_quest_completion()
 
     def open_portal(self, portal: URIRef) -> None:

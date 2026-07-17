@@ -18,7 +18,26 @@ def test_new_state_puts_player_in_start_room():
     state = new_state(WORLD)
     assert (PLAYER, RDF.type, SR.Player) in state
     assert (PLAYER, SR.currentRoom, EX.entrance01) in state
-    assert len(state) == 2  # solo player: assenza di tripla = stato di default
+    # player (tipo + currentRoom) + start room visitata: assenza di tripla = default
+    assert len(state) == 3
+
+
+def test_new_state_marks_start_room_visited():
+    state = new_state(WORLD)
+    assert (EX.entrance01, SR.visited, Literal(True)) in state
+
+
+def test_move_to_marks_destination_visited(eng):
+    assert (EX.ossuary02, SR.visited, Literal(True)) not in eng.state
+    eng.move_to(EX.ossuary02)
+    assert (EX.ossuary02, SR.visited, Literal(True)) in eng.state
+
+
+def test_visited_is_idempotent(eng):
+    eng.move_to(EX.ossuary02)
+    eng.move_to(EX.entrance01)
+    eng.move_to(EX.ossuary02)  # di nuovo
+    assert len(list(eng.state.triples((EX.ossuary02, SR.visited, None)))) == 1
 
 
 def test_available_moves_from_start(eng):
