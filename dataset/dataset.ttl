@@ -89,10 +89,17 @@ ex:graveHermit a sr:NPC ;
 ex:recoverRelic a sr:Quest ;
   rdfs:label "Recupera la Reliquia"@it ;
   rdfs:label "Recover the Relic"@en ;
-  rdfs:comment "Quest di recupero che indirizza il giocatore verso il santuario e ricompensa il completamento con un oggetto chiave."@it ;
-  rdfs:comment "Recovery quest that directs the player toward the sanctum and rewards completion with a key item."@en ;
+  rdfs:comment "Quest di recupero che indirizza il giocatore verso il santuario e ricompensa il completamento con una reliquia recuperata sul posto."@it ;
+  rdfs:comment "Recovery quest that directs the player toward the sanctum and rewards completion with a relic recovered on site."@en ;
   sr:questTargetRoom ex:sanctum01 ;
-  sr:questReward ex:ivoryKey .
+  sr:questReward ex:sanctumRelic .
+
+ex:sanctumRelic a sr:Item ;
+  rdfs:label "Reliquia del Santuario"@it ;
+  rdfs:label "Sanctum Relic"@en ;
+  rdfs:comment "Reliquia sacra recuperata nel santuario più profondo, ricompensa per aver portato a termine la ricerca."@it ;
+  rdfs:comment "Sacred relic recovered in the deepest sanctum, reward for completing the search."@en ;
+  sr:rarity 5 .
 
 ex:tyrantSigil a sr:Item ;
   rdfs:label "Sigillo del Tiranno"@it ;

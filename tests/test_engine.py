@@ -145,7 +145,7 @@ def test_fight_last_monster_in_target_room_completes_quest(eng):
     eng.state.set((PLAYER, SR.currentRoom, EX.sanctum01))
     eng.fight()  # il Tiranno della Cripta è l'unico mostro del santuario
     assert (EX.recoverRelic, SR.questStatus, Literal("completed")) in eng.state
-    assert (PLAYER, SR.hasItem, EX.ivoryKey) in eng.state  # ricompensa della quest
+    assert (PLAYER, SR.hasItem, EX.sanctumRelic) in eng.state  # ricompensa della quest
     assert eng.outcome() == "victory"
 
 
