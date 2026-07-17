@@ -1,0 +1,12 @@
+# Configurazione del simulatore di run (tools/play.py).
+
+[validation]
+# "turn" = validazione SHACL runtime dopo ogni transizione (default)
+# "on-demand" = solo quando si usa il comando `valida`
+mode = "turn"
+
+[combat]
+# Probabilità di vittoria del player in combattimento, in [0, 1]. 1 = vince sempre.
+player_success = 1.0
+
+# seed = 42   # opzionale: seme RNG per run riproducibili; commentato = casuale
