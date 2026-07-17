@@ -12,6 +12,6 @@ player_success = 1.0
 [map]
 # Se true, riscrive mappa.md (accanto al salvataggio) dopo ogni azione riuscita:
 # tieni la preview aperta e vedi la mappa aggiornarsi turno per turno.
-auto = false
+auto = true
 
 # seed = 42   # opzionale: seme RNG per run riproducibili; commentato = casuale
