@@ -1,0 +1,47 @@
+# Caso rotto: la quest premia la chiave del portale che sblocca la sua target room
+# (viola sr:QuestRewardNotGatingKeyShape). Il resto del micro-mondo è ben formato.
+@prefix sr:   <http://example.org/semantic-roguelike#> .
+@prefix ex:   <http://example.org/id/> .
+
+ex:testBiome a sr:Biome .
+
+ex:startRoom a sr:Room ;
+  sr:isStartRoom true ;
+  sr:locatedInBiome ex:testBiome ;
+  sr:dangerLevel 1 ;
+  sr:floorIndex 1 ;
+  sr:connectedTo ex:gateRoom .
+
+ex:gateRoom a sr:Room ;
+  sr:locatedInBiome ex:testBiome ;
+  sr:dangerLevel 2 ;
+  sr:floorIndex 1 .
+
+ex:lockedTarget a sr:Room ;
+  sr:locatedInBiome ex:testBiome ;
+  sr:dangerLevel 3 ;
+  sr:floorIndex 2 .
+
+ex:gateKey a sr:KeyItem ;
+  sr:rarity 4 .
+
+ex:gate a sr:Portal ;
+  sr:portalInRoom ex:gateRoom ;
+  sr:requiresItem ex:gateKey ;
+  sr:unlocksRoom ex:lockedTarget .
+
+# La chiave ha una fonte lecita (drop) così non scatta OrphanKey/LockKeyCycle:
+# l'unica violazione attesa è il reward-gating.
+ex:guardian a sr:Monster ;
+  sr:belongsToFaction ex:testFaction ;
+  sr:dropsItem ex:gateKey ;
+  sr:spawnWeight 5 ;
+  sr:minPlayerLevel 1 .
+
+ex:testFaction a sr:Faction .
+
+ex:gateRoom sr:hostsMonster ex:guardian .
+
+ex:badQuest a sr:Quest ;
+  sr:questTargetRoom ex:lockedTarget ;
+  sr:questReward ex:gateKey .

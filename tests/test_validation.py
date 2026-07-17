@@ -42,6 +42,7 @@ BROKEN_CASES = [
     ("lock-key-cycle.ttl", EX.cyclePortal, ("shape", SR.LockKeyCycleShape)),
     ("two-start-rooms.ttl", EX.startA, ("shape", SR.SingleStartRoomShape)),
     ("no-start-room.ttl", EX.roomA, ("shape", SR.StartRoomExistsShape)),
+    ("quest-reward-gating-key.ttl", EX.badQuest, ("shape", SR.QuestRewardNotGatingKeyShape)),
 ]
 
 

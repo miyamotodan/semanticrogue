@@ -422,3 +422,24 @@ sr:StartRoomExistsShape a sh:NodeShape ;
       WHERE { $this a sr:Room . }
     """ ;
   ] .
+
+sr:QuestRewardNotGatingKeyShape a sh:NodeShape ;
+  sh:targetClass sr:Quest ;
+  rdfs:label "Il premio non è la chiave d'accesso alla target"@it ;
+  rdfs:label "Reward is not the target's gating key"@en ;
+  rdfs:comment "Shape SPARQL-based: una quest non deve dare come ricompensa l'oggetto richiesto da un portale che sblocca la sua stessa stanza obiettivo (premio che il giocatore deve già possedere per completarla)."@it ;
+  rdfs:comment "SPARQL-based shape: a quest must not reward the item required by a portal that unlocks its own target room (a reward the player must already hold to complete it)."@en ;
+  sh:sparql [
+    sh:prefixes sr:RogueShapes ;
+    sh:message "La ricompensa della quest è la chiave del portale che sblocca la sua stanza obiettivo: premio incoerente."@it ;
+    sh:message "The quest reward is the key to the portal that unlocks its own target room: incoherent reward."@en ;
+    sh:select """
+      SELECT $this
+      WHERE {
+        $this sr:questReward ?item ;
+              sr:questTargetRoom ?target .
+        ?portal sr:requiresItem ?item ;
+                sr:unlocksRoom ?target .
+      }
+    """ ;
+  ] .
