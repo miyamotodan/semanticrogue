@@ -161,3 +161,14 @@ def test_talk_to_activates_all_unaccepted_quests(eng):
 
 def test_outcome_none_during_normal_play(eng):
     assert eng.outcome() is None
+
+
+def test_talk_to_completes_quest_already_satisfied(eng):
+    # Il player è nella target room di endTheCourt, già ripulita, e solo ora
+    # accetta la quest da un NPC posto lì: deve completarsi subito.
+    eng.state.set((PLAYER, SR.currentRoom, EX.throneVault01))
+    eng.state.add((EX.deadKing, SR.isAlive, Literal(False)))          # target room ripulita
+    eng.state.add((EX.graveHermit, SR.npcInRoom, EX.throneVault01))   # NPC presente qui
+    eng.talk_to(EX.graveHermit)
+    assert (EX.endTheCourt, SR.questStatus, Literal("completed")) in eng.state
+    assert (PLAYER, SR.hasItem, EX.relicOfDawn) in eng.state          # reward di endTheCourt

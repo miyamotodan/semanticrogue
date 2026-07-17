@@ -112,6 +112,7 @@ class Engine:
             raise ActionError(f"nessun NPC con quest da offrire qui: {npc}")
         for quest in offers:
             self.state.add((quest, SR.questStatus, Literal("active")))
+        self._check_quest_completion()
         return offers
 
     def outcome(self) -> str | None:
