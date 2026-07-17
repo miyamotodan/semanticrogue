@@ -89,3 +89,56 @@ def test_moving_into_cleared_target_room_completes_active_quest(eng):
     eng.move_to(EX.sporeNest02)
     assert (EX.cullTheSpores, SR.questStatus, Literal("completed")) in eng.state
     assert (PLAYER, SR.hasItem, EX.boneBlade) in eng.state
+
+
+def test_fight_defeats_monster_and_collects_drops(eng):
+    eng.state.set((PLAYER, SR.currentRoom, EX.ossuary02))
+    won = eng.fight()  # un solo mostro: il bersaglio è implicito
+    assert won is True
+    assert (EX.cryptRat, SR.isAlive, Literal(False)) in eng.state
+    assert (PLAYER, SR.hasItem, EX.rustSword) in eng.state
+    assert eng.run_query("monsters-here.rq") == []
+
+
+def test_fight_requires_target_when_room_has_many_monsters(eng):
+    eng.state.set((PLAYER, SR.currentRoom, EX.sporeNest02))  # Bruto + Madre delle Spore
+    with pytest.raises(ActionError):
+        eng.fight()
+    assert eng.fight(EX.myceliumBrute) is True
+
+
+def test_fight_without_monsters_is_rejected(eng):
+    with pytest.raises(ActionError):
+        eng.fight()  # entrance01 è vuota
+
+
+def test_fight_lost_kills_player():
+    state = new_state(WORLD)
+    losing = Engine(WORLD, state, player_success=0.0, seed=1)
+    losing.state.set((PLAYER, SR.currentRoom, EX.ossuary02))
+    assert losing.fight() is False
+    assert (PLAYER, SR.isAlive, Literal(False)) in losing.state
+    assert losing.outcome() == "defeat"
+
+
+def test_fight_last_monster_in_target_room_completes_quest(eng):
+    eng.state.add((EX.recoverRelic, SR.questStatus, Literal("active")))
+    eng.state.set((PLAYER, SR.currentRoom, EX.sanctum01))
+    eng.fight()  # il Tiranno della Cripta è l'unico mostro del santuario
+    assert (EX.recoverRelic, SR.questStatus, Literal("completed")) in eng.state
+    assert (PLAYER, SR.hasItem, EX.ivoryKey) in eng.state  # ricompensa della quest
+    assert eng.outcome() == "victory"
+
+
+def test_talk_to_activates_all_unaccepted_quests(eng):
+    activated = eng.talk_to(EX.graveHermit)
+    assert set(activated) == {EX.recoverRelic, EX.endTheCourt}
+    assert (EX.recoverRelic, SR.questStatus, Literal("active")) in eng.state
+    with pytest.raises(ActionError):
+        eng.talk_to(EX.graveHermit)  # niente più quest da offrire
+    with pytest.raises(ActionError):
+        eng.talk_to(EX.ashPriest)  # è in un'altra stanza
+
+
+def test_outcome_none_during_normal_play(eng):
+    assert eng.outcome() is None

@@ -80,3 +80,41 @@ class Engine:
                 self.state.set((quest, SR.questStatus, Literal("completed")))
                 for reward in self.world.objects(quest, SR.questReward):
                     self.state.add((PLAYER, SR.hasItem, reward))
+
+    def fight(self, monster: URIRef | None = None) -> bool:
+        """Affronta un mostro vivo nella stanza corrente. True = vinto, False = player morto."""
+        alive = [row.mostro for row in self.run_query("monsters-here.rq")]
+        if not alive:
+            raise ActionError("nessun mostro da combattere qui")
+        if monster is None:
+            if len(alive) > 1:
+                raise ActionError("più mostri presenti: indica quale combattere")
+            monster = alive[0]
+        elif monster not in alive:
+            raise ActionError(f"mostro non presente o già sconfitto: {monster}")
+
+        if self.rng.random() < self.player_success:
+            self.state.add((monster, SR.isAlive, Literal(False)))
+            for item in self.world.objects(monster, SR.dropsItem):
+                self.state.add((PLAYER, SR.hasItem, item))
+            self._check_quest_completion()
+            return True
+        self.state.add((PLAYER, SR.isAlive, Literal(False)))
+        return False
+
+    def talk_to(self, npc: URIRef) -> list[URIRef]:
+        """Parla con un NPC nella stanza corrente: attiva le sue quest non ancora accettate."""
+        offers = [row.quest for row in self.run_query("npcs-here.rq") if row.npc == npc]
+        if not offers:
+            raise ActionError(f"nessun NPC con quest da offrire qui: {npc}")
+        for quest in offers:
+            self.state.add((quest, SR.questStatus, Literal("active")))
+        return offers
+
+    def outcome(self) -> str | None:
+        """Esito della run: \"defeat\" se il player è morto, \"victory\" alla prima quest completata."""
+        if (PLAYER, SR.isAlive, Literal(False)) in self.state:
+            return "defeat"
+        if next(self.state.subjects(SR.questStatus, Literal("completed")), None) is not None:
+            return "victory"
+        return None
