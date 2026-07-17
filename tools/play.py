@@ -2,7 +2,7 @@
 
 Uso: python -m tools.play [--new] [--seed N] [--save FILE.ttl] [--config FILE.toml]
 Comandi: vai <stanza> | apri <portale> | combatti [mostro] | parla <npc>
-         valida | stato | esci
+         valida | stato | mappa | esci
 Exit code: 0 = run terminata o uscita, 2 = errore config/parsing,
            3 = stato runtime non conforme (al resume o dopo una transizione).
 """
@@ -16,6 +16,7 @@ from tools.common import SAVE_PATH, label_it, load_runtime_world, local_name
 from tools.config import CONFIG_PATH, load_config
 from tools.engine import (PLAYER, SR, ActionError, Engine, new_state,
                           validate_runtime)
+from tools.map import build_map, to_markdown
 
 
 def pick(graph: Graph, candidates, text: str) -> URIRef | None:
@@ -58,7 +59,7 @@ def run_validation_report(eng: Engine) -> bool:
     return conforms
 
 
-def do_command(eng: Engine, line: str) -> bool:
+def do_command(eng: Engine, line: str, save_path: Path) -> bool:
     """Esegue un comando. Ritorna True se c'è stata una transizione di stato."""
     verb, _, arg = line.strip().partition(" ")
     verb, arg = verb.lower(), arg.strip()
@@ -102,8 +103,15 @@ def do_command(eng: Engine, line: str) -> bool:
     if verb == "stato":
         show_status(eng)
         return False
+    if verb == "mappa":
+        target = save_path.parent / "mappa.md"
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_text(to_markdown(build_map(eng.world, eng.state), "Mappa della partita"),
+                          encoding="utf-8")
+        print(f"Mappa scritta in {target}")
+        return False
     raise ActionError(f"comando sconosciuto: '{verb}' "
-                      "(comandi: vai, apri, combatti, parla, valida, stato, esci)")
+                      "(comandi: vai, apri, combatti, parla, valida, stato, mappa, esci)")
 
 
 def main() -> int:
@@ -166,7 +174,7 @@ def main() -> int:
             return 0
 
         try:
-            changed = do_command(eng, line)
+            changed = do_command(eng, line, args.save)
         except ActionError as e:
             print(f"Azione non ammissibile: {e}")
             continue

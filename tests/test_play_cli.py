@@ -84,3 +84,12 @@ ex:sealedGate sr:isOpen true .
     assert "Conforms: False" in result.stdout
     after = save.read_text(encoding="utf-8")
     assert after == before
+
+
+def test_mappa_command_writes_map_next_to_save(tmp_path):
+    save = tmp_path / "save.ttl"
+    result = run_cli(["--new"], ["mappa", "esci"], save)
+    assert result.returncode == 0, result.stderr
+    content = (tmp_path / "mappa.md").read_text(encoding="utf-8")
+    assert "```mermaid" in content
+    assert "🧝" in content  # la stanza del player è marcata
