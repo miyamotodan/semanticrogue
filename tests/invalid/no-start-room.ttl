@@ -1,0 +1,16 @@
+# Caso rotto: nessuna stanza iniziale (viola sr:StartRoomExistsShape).
+@prefix sr:   <http://example.org/semantic-roguelike#> .
+@prefix ex:   <http://example.org/id/> .
+
+ex:testBiome a sr:Biome .
+
+ex:roomA a sr:Room ;
+  sr:locatedInBiome ex:testBiome ;
+  sr:dangerLevel 1 ;
+  sr:floorIndex 1 ;
+  sr:connectedTo ex:roomB .
+
+ex:roomB a sr:Room ;
+  sr:locatedInBiome ex:testBiome ;
+  sr:dangerLevel 1 ;
+  sr:floorIndex 1 .

@@ -40,6 +40,8 @@ BROKEN_CASES = [
     ("orphan-key.ttl", EX.orphanKey, ("shape", SR.OrphanKeyShape)),
     ("unreachable-room.ttl", EX.lostRoom, ("shape", SR.UnreachableRoomShape)),
     ("lock-key-cycle.ttl", EX.cyclePortal, ("shape", SR.LockKeyCycleShape)),
+    ("two-start-rooms.ttl", EX.startA, ("shape", SR.SingleStartRoomShape)),
+    ("no-start-room.ttl", EX.roomA, ("shape", SR.StartRoomExistsShape)),
 ]
 
 

@@ -377,3 +377,48 @@ sr:LockKeyCycleShape a sh:NodeShape ;
       }
     """ ;
   ] .
+sr:SingleStartRoomShape a sh:NodeShape ;
+  sh:targetClass sr:Room ;
+  rdfs:label "Una sola stanza iniziale"@it ;
+  rdfs:label "Single start room"@en ;
+  rdfs:comment "Shape SPARQL-based: non possono esistere due o più stanze marcate come iniziali; ogni stanza iniziale in eccesso viene segnalata."@it ;
+  rdfs:comment "SPARQL-based shape: two or more rooms flagged as start are not allowed; every excess start room is reported."@en ;
+  sh:sparql [
+    sh:prefixes sr:RogueShapes ;
+    sh:message "Esiste più di una stanza iniziale nel mondo: deve essercene esattamente una."@it ;
+    sh:message "There is more than one start room in the world: there must be exactly one."@en ;
+    sh:select """
+      SELECT $this
+      WHERE {
+        $this sr:isStartRoom true .
+        ?other sr:isStartRoom true .
+        FILTER(?other != $this)
+      }
+    """ ;
+  ] .
+
+sr:StartRoomExistsShape a sh:NodeShape ;
+  rdfs:label "Esiste una stanza iniziale"@it ;
+  rdfs:label "A start room exists"@en ;
+  rdfs:comment "Shape SPARQL-based: il mondo deve avere una stanza iniziale; se ne manca del tutto, ogni stanza viene segnalata come focus della violazione."@it ;
+  rdfs:comment "SPARQL-based shape: the world must have a start room; if none exists, every room is reported as a focus of the violation."@en ;
+  sh:target [
+    a sh:SPARQLTarget ;
+    sh:prefixes sr:RogueShapes ;
+    sh:select """
+      SELECT ?this
+      WHERE {
+        ?this a sr:Room .
+        FILTER NOT EXISTS { ?r sr:isStartRoom true . }
+      }
+    """ ;
+  ] ;
+  sh:sparql [
+    sh:prefixes sr:RogueShapes ;
+    sh:message "Nessuna stanza è marcata come iniziale: il mondo non ha un punto di partenza."@it ;
+    sh:message "No room is flagged as start: the world has no starting point."@en ;
+    sh:select """
+      SELECT $this
+      WHERE { $this a sr:Room . }
+    """ ;
+  ] .

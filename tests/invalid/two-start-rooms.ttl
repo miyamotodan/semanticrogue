@@ -1,0 +1,19 @@
+# Caso rotto: due stanze iniziali (viola sr:SingleStartRoomShape).
+@prefix sr:   <http://example.org/semantic-roguelike#> .
+@prefix ex:   <http://example.org/id/> .
+
+ex:testBiome a sr:Biome .
+
+ex:startA a sr:Room ;
+  sr:isStartRoom true ;
+  sr:locatedInBiome ex:testBiome ;
+  sr:dangerLevel 1 ;
+  sr:floorIndex 1 .
+
+ex:startB a sr:Room ;
+  sr:isStartRoom true ;
+  sr:locatedInBiome ex:testBiome ;
+  sr:dangerLevel 1 ;
+  sr:floorIndex 1 .
+
+ex:startA sr:connectedTo ex:startB .
