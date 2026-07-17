@@ -25,6 +25,8 @@ def test_world_map_shows_rooms_floors_and_closed_portals():
 def test_runtime_overlay_marks_player_deaths_and_open_portals():
     state = new_state(WORLD)
     state.set((PLAYER, SR.currentRoom, EX.crypt07))
+    state.add((EX.crypt07, SR.visited, Literal(True)))     # stanze note: contenuto visibile
+    state.add((EX.sanctum01, SR.visited, Literal(True)))
     state.add((EX.boneWarden, SR.isAlive, Literal(False)))
     state.add((EX.sealedGate, SR.isOpen, Literal(True)))
     state.add((EX.recoverRelic, SR.questStatus, Literal("active")))
@@ -34,6 +36,25 @@ def test_runtime_overlay_marks_player_deaths_and_open_portals():
     assert text.count("🔓") == 1 and text.count("🔒") == 1
     assert "⭐ Recupera la Reliquia" in text    # stella sulla target room (sanctum01)
     assert "▶ Recupera la Reliquia" in text     # legenda quest
+
+
+def test_fog_hides_unvisited_rooms_in_a_run():
+    state = new_state(WORLD)                       # solo l'ingresso è visitato
+    state.set((PLAYER, SR.currentRoom, EX.entrance01))
+    text = build_map(WORLD, state)
+    assert "Ingresso delle Catacombe" in text      # visitata: nome visibile
+    assert "Nido di Spore" not in text             # non visitata: nome nascosto
+    assert "👑 Madre delle Spore" not in text       # contenuto nascosto
+    assert "???" in text                           # nodi bui presenti
+    assert "classDef fog" in text
+    assert "sporeNest02[" in text                  # l'id tecnico resta: connessioni intatte
+
+
+def test_no_fog_without_a_run():
+    text = build_map(WORLD)                         # nessuno stato: mondo authored pieno
+    assert "Nido di Spore" in text
+    assert "???" not in text
+    assert "classDef fog" not in text
 
 
 def run_map(args):

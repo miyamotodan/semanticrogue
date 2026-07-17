@@ -18,7 +18,14 @@ from tools.engine import PLAYER, SR
 
 def _node_label(world: Graph, state: Graph, room: URIRef,
                 player_room: URIRef | None) -> str:
-    """Etichetta multiriga del nodo stanza: nome, mostri, NPC, obiettivi di quest."""
+    """Etichetta multiriga del nodo stanza: nome, mostri, NPC, obiettivi di quest.
+
+    In una partita in corso (player presente) le stanze non ancora visitate
+    restano anonime ("???"): topologia visibile, contenuto nascosto.
+    """
+    in_run = player_room is not None
+    if in_run and (room, SR.visited, Literal(True)) not in state:
+        return "???"
     parts = [label_it(world, room)]
     if room == player_room:
         parts[0] = "🧝 " + parts[0]
@@ -44,9 +51,12 @@ def build_map(world: Graph, state: Graph | None = None) -> str:
     by_floor: dict[int, list[URIRef]] = {}
     for room in world.subjects(RDF.type, SR.Room):
         by_floor.setdefault(int(world.value(room, SR.floorIndex)), []).append(room)
+    fog: list[str] = []
     for floor in sorted(by_floor):
         lines.append(f'  subgraph P{floor}["Piano {floor}"]')
         for room in sorted(by_floor[floor], key=str):
+            if player_room is not None and (room, SR.visited, Literal(True)) not in state:
+                fog.append(local_name(room))
             lines.append(
                 f'    {local_name(room)}["{_node_label(world, state, room, player_room)}"]')
         lines.append("  end")
@@ -71,6 +81,11 @@ def build_map(world: Graph, state: Graph | None = None) -> str:
             icon = "✅" if str(status) == "completed" else "▶"
             lines.append(f'    {local_name(quest)}Q["{icon} {label_it(world, quest)}"]')
         lines.append("  end")
+
+    if fog:
+        for name in fog:
+            lines.append(f"  class {name} fog")
+        lines.append("  classDef fog fill:#263238,color:#eceff1,stroke:#455a64")
 
     if player_room is not None:
         lines.append(f"  class {local_name(player_room)} player")
