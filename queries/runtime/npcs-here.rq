@@ -1,0 +1,14 @@
+# NPC nella stanza corrente con le quest che offrono e che non sono ancora state accettate.
+# Risponde a: "con chi posso parlare, e per quale quest?"
+PREFIX sr: <http://example.org/semantic-roguelike#>
+PREFIX ex: <http://example.org/id/>
+
+SELECT ?npc ?quest
+WHERE {
+  ex:player sr:currentRoom ?qui .
+  ?npc a sr:NPC ;
+       sr:npcInRoom ?qui ;
+       sr:offersQuest ?quest .
+  FILTER NOT EXISTS { ?quest sr:questStatus ?s . }
+}
+ORDER BY ?npc ?quest

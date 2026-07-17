@@ -1,0 +1,11 @@
+# Quadro delle quest della run: stato corrente (assente = non accettata) e stanza obiettivo.
+# Risponde a: "a che punto sono le quest?"
+PREFIX sr: <http://example.org/semantic-roguelike#>
+
+SELECT ?quest ?status ?target
+WHERE {
+  ?quest a sr:Quest ;
+         sr:questTargetRoom ?target .
+  OPTIONAL { ?quest sr:questStatus ?status . }
+}
+ORDER BY ?quest

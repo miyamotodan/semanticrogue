@@ -1,0 +1,15 @@
+# Portali nella stanza corrente ancora chiusi la cui chiave è nell'inventario.
+# Risponde a: "quali portali posso aprire ora?"
+PREFIX sr: <http://example.org/semantic-roguelike#>
+PREFIX ex: <http://example.org/id/>
+
+SELECT ?portale ?chiave ?stanza
+WHERE {
+  ex:player sr:currentRoom ?qui .
+  ?portale a sr:Portal ;
+           sr:portalInRoom ?qui ;
+           sr:requiresItem ?chiave ;
+           sr:unlocksRoom ?stanza .
+  ex:player sr:hasItem ?chiave .
+  FILTER NOT EXISTS { ?portale sr:isOpen true . }
+}

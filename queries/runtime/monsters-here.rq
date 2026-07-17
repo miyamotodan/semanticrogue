@@ -1,0 +1,12 @@
+# Mostri ancora vivi nella stanza corrente del player.
+# Risponde a: "chi devo affrontare qui?"
+PREFIX sr: <http://example.org/semantic-roguelike#>
+PREFIX ex: <http://example.org/id/>
+
+SELECT ?mostro
+WHERE {
+  ex:player sr:currentRoom ?qui .
+  ?qui sr:hostsMonster ?mostro .
+  FILTER NOT EXISTS { ?mostro sr:isAlive false . }
+}
+ORDER BY ?mostro

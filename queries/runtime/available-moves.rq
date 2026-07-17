@@ -1,0 +1,28 @@
+# Mosse ammissibili dalla stanza corrente del player: passaggi (in entrambi i versi)
+# e portali aperti (in entrambi i versi). Risponde a: "dove posso andare ora?"
+PREFIX sr: <http://example.org/semantic-roguelike#>
+PREFIX ex: <http://example.org/id/>
+
+SELECT DISTINCT ?stanza ?via
+WHERE {
+  ex:player sr:currentRoom ?qui .
+  {
+    ?qui sr:connectedTo ?stanza .
+    BIND("passaggio" AS ?via)
+  }
+  UNION
+  {
+    ?stanza sr:connectedTo ?qui .
+    BIND("passaggio" AS ?via)
+  }
+  UNION
+  {
+    ?p a sr:Portal ; sr:portalInRoom ?qui ; sr:unlocksRoom ?stanza ; sr:isOpen true .
+    BIND("portale" AS ?via)
+  }
+  UNION
+  {
+    ?p a sr:Portal ; sr:unlocksRoom ?qui ; sr:portalInRoom ?stanza ; sr:isOpen true .
+    BIND("portale" AS ?via)
+  }
+}
