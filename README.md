@@ -15,6 +15,13 @@ source .venv/Scripts/activate      # Git Bash
 python -m pip install -r requirements.txt
 ```
 
+su buntu
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+```
+
 Nei comandi che seguono si assume il venv attivo (altrimenti sostituisci `python` con `.venv/Scripts/python`).
 
 ## Comandi
